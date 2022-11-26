@@ -16,6 +16,7 @@ function OSUReduce(T::Type=Float32;
 end
 
 function osu_reduce(T::Type, bufsize::Int, iters::Int, comm::MPI.Comm)
+    prinntln("from Bench")
     send_buffer = zeros(T, bufsize)
     recv_buffer = ones(T, bufsize)
     timer = 0.0

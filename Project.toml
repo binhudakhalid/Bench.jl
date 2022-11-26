@@ -1,0 +1,14 @@
+name = "Bench"
+uuid = "5488f652-6de1-11ed-3f2a-8100bcc92d2b"
+authors = ["Khalid Bin Huda<khalid.bin.huda@hotmail.com>"]
+version = "0.1.0"
+
+[deps]
+MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
+MPIBenchmarks = "357d3ff1-0a0b-4dea-8b18-618e57d74eb1"
+
+[compat]
+MPI = "0.20"
+julia = "1.6"
+Plots = "1.35.8"
+

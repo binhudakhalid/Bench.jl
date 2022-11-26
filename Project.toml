@@ -1,7 +1,7 @@
 name = "Bench"
 uuid = "5488f652-6de1-11ed-3f2a-8100bcc92d2b"
 authors = ["Khalid Bin Huda<khalid.bin.huda@hotmail.com>"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"

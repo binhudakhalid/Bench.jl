@@ -51,11 +51,4 @@ Execute the MPI benchmark `b`.
 function benchmark end
 
 include("imb_collective.jl")
-include("imb_p2p.jl")
-
-include("osu_collective.jl")
-include("osu_p2p.jl")
-
-include("osu_one_sided.jl")
-
 end

@@ -1,21 +1,22 @@
-export IMBReduce
+export BenchBcast
 
-struct IMBReduce <: MPIBenchmark
+struct BenchBcast <: MPIBenchmark
     conf::Configuration
     name::String
 end
 
-function IMBReduce(T::Type=Float32;
+function BenchBcast(T::Type=Float32;
                    filename::Union{String,Nothing}="julia_imb_reduce.csv",
                    kwargs...,
                    )
-    return IMBReduce(
+    return BenchBcast(
         Configuration(T; filename, kwargs...),
         "IMB Reduce",
     )
 end
 
 function imb_reduce(T::Type, bufsize::Int, iters::Int, comm::MPI.Comm)
+    print("imb_reduceimb_reduceimb_reduceimb_reduceimb_reduceimb_reduce")
     send_buffer = zeros(T, bufsize)
     recv_buffer = zeros(T, bufsize)
     timer = 0.0
@@ -30,4 +31,4 @@ function imb_reduce(T::Type, bufsize::Int, iters::Int, comm::MPI.Comm)
     return avgtime
 end
 
-benchmark(bench::IMBReduce) = run_imb_collective(bench, imb_reduce, bench.conf)
+benchmark(bench::BenchBcast) = run_imb_collective(bench, imb_reduce, bench.conf)

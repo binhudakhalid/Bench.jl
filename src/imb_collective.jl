@@ -1,75 +1,85 @@
-function run_imb_collective(benchmark::MPIBenchmark, func::Function, conf::Configuration)
-    MPI.Init()
+function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configuration)
 
-    comm = MPI.COMM_WORLD
-    # Current rank
-    rank = MPI.Comm_rank(comm)
-    # Number of ranks
-    nranks = MPI.Comm_size(comm)
 
-    # Warmup
-    func(conf.T, 1, 10, comm)
+    if String(string(func)) == "imb_b_bcast"
+        dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
+        func(conf.T, 1, 10 , 3, dic_of_algorithm)
 
-    if iszero(rank)
-        print_header(io) = println(io, "size (bytes),iterations,min_time (seconds),max_time (seconds),avg_time (seconds)")
-        print_timings(io, bytes, iters, min_time, max_time, avg_time) = println(io, bytes, ",", iters, ",", min_time, ",", max_time, ",", avg_time)
+        algo = "coll_tuned_bcast_algorithm"
+        write_job_script_file(dic_of_algorithm, "coll_tuned_bcast_algorithm")
+        write_julia_script(dic_of_algorithm, "Bcast")
 
-        println(conf.stdout, "----------------------------------------")
-        println(conf.stdout, "Running benchmark ", benchmark.name, " with type ", conf.T, " on ", nranks, " MPI ranks")
-        println(conf.stdout)
-        print_header(conf.stdout)
-        if !isnothing(conf.filename)
-            file = open(conf.filename, "w")
-            print_header(file)
-        end
+    elseif  String(string(func)) == "imb_b_scatter"
+        dic_of_algorithm = get_tuned_algorithm_from_openmpi("scatter") # get_all_bcast_algorithm()
+        func(conf.T, 1, 10 , 3, dic_of_algorithm)
     end
 
-    for s in conf.lengths
-        size = 1 << s
-        iters = conf.iters(conf.T, s)
-        # Measure time on current rank
-        time = func(conf.T, size, iters, comm)
+  
 
-        if !iszero(rank)
-            # If we aren't on rank 0, send to it our time
-            MPI.Send(time, comm; dest=0)
-        else
-            # Vector of timings across all ranks
-            times = zeros(nranks)
-            # Set first element of the vector to the time on rank 0
-            times[1] = time
 
-            # Collect all the times from all other ranks
-            for source in 1:(nranks - 1)
-                times[source + 1] = MPI.Recv(typeof(time), comm; source)
-            end
 
-            # Minimum time measured across all ranks
-            min_time = minimum(times)
-            # Maximum time measured across all ranks
-            max_time = maximum(times)
-            # Average time measured across all ranks
-            avg_time = sum(times) / length(times)
-
-            # Number of bytes trasmitted
-            bytes = size * sizeof(conf.T)
-
-            # Print out our results
-            print_timings(conf.stdout, bytes, iters, min_time, max_time, avg_time)
-            if !isnothing(conf.filename)
-                print_timings(file, bytes, iters, min_time, max_time, avg_time)
-            end
-        end
-    end
-
-    if iszero(rank)
-        println(conf.stdout, "----------------------------------------")
-        if !isnothing(conf.filename)
-            close(file)
-        end
-    end
 
     return nothing
 end
 
+function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String)
+    
+    initial_part = """
+    #!/bin/bash
+    #SBATCH -q express
+    #SBATCH -J JuliaBenchMark
+    #SBATCH -A hpc-prf-mpibj
+    ##SBATCH -p hpc-prf-mpibj
+    #SBATCH -N 1			 ## [NUMBER_OF_NODE]
+    #SBATCH --cpus-per-task=1
+    #SBATCH --ntasks-per-node=4      ## [NUMBER_OF_MPI_RANKS_PER_NODE]
+    #SBATCH --mem-per-cpu 10G         ## [Memory per CPU]  - A node have many CPUs
+    #SBATCH -t 00:30:00
+    s
+    module reset
+    module load lang       # loading the gateway module
+    module load JuliaHPC   # loading the latest JuliaHPC
+
+    """
+
+    middle_part = ""
+    line = ""
+    @show dict
+    for item in dict
+        @show item.first
+        @show item.second
+        line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np 4 julia --project base.jl \n"
+    end
+
+    final_string = string(initial_part, line)
+
+    job_script_file_name = coll_tuned_bcast_algorithm * "_" * "jobscript.sh"
+    # Write job script file
+    open(job_script_file_name, "w") do file
+        write(file, final_string)
+    end
+end
+
+function write_julia_script(dict::Dict, algo_name::String)
+
+        #write julia benchmark file 
+        for item in dict
+            algo_name = replace(item.second , " " => "_")
+            file_name = "bcast_algo_" * algo_name * ".jl"
+            julia_benchmark_script = """
+            using MPIBenchmarks
+            benchmark(OSUReduce(;filename="$file_name"))
+            """
+            open(file_name, "w") do file
+                write(file, julia_benchmark_script)
+            end
+        end
+
+    #run(`whoami`)
+    #read(` julia s.jl`, String)
+    ##run(`./d.sh `)
+
+end
+
 include("Bench_Bcast.jl")
+include("Util.jl")

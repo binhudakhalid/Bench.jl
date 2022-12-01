@@ -25,3 +25,21 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
     return dic_of_algorithm
 
 end
+
+initial_part = """
+#!/bin/bash
+#SBATCH -q express
+#SBATCH -J JuliaBenchMark
+#SBATCH -A hpc-prf-mpibj
+##SBATCH -p hpc-prf-mpibj
+#SBATCH -N 1			 ## [NUMBER_OF_NODE]
+#SBATCH --cpus-per-task=1
+#SBATCH --ntasks-per-node=4      ## [NUMBER_OF_MPI_RANKS_PER_NODE]
+#SBATCH --mem-per-cpu 10G         ## [Memory per CPU]  - A node have many CPUs
+#SBATCH -t 00:30:00
+
+module reset
+module load lang       # loading the gateway module
+module load JuliaHPC   # loading the latest JuliaHPC
+
+"""

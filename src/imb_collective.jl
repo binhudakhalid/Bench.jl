@@ -1,6 +1,7 @@
 function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configuration)
 
 
+
     if String(string(func)) == "imb_b_bcast"
 
         # MPIBenchmarks.jl: "OSUBroadcast"
@@ -13,14 +14,30 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
         func(conf.T, 1, 10 , 3, dic_of_algorithm)
         algo = "coll_tuned_bcast_algorithm"
         a = write_job_script_file(dic_of_algorithm, "coll_tuned_bcast_algorithm", MPIBenchmarks_function_name)
-        submit_sbatch(a)
+        #submit_sbatch(a)
+
+
+
+        #rray1 = ["coll_tuned_bcast_algorithm_ignore.jl.csv", "coll_tuned_bcast_algorithm_knomial_tree.jl.csv"]
+
+        str1 = "coll_tuned_bcast_algorithm_ignore.jl.csv,coll_tuned_bcast_algorithm_knomial_tree.jl.csv"
+        open("graphDB.csv", "w") do file
+            write(file, str1)
+        end
+
+
+        ##plot_bench("bcast"; xlims=(4, 2 ^ 27), ylims=(Inf, Inf), Array1)
 
     elseif  String(string(func)) == "imb_b_scatter"
         #dic_of_algorithm = get_tuned_algorithm_from_openmpi("scatter") # get_all_bcast_algorithm()
         #func(conf.T, 1, 10 , 3, dic_of_algorithm)
+    else
+        dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
+        func(conf.T, 1, 10 , 3, dic_of_algorithm)
+        
     end
 
-  
+    
 
 
 
@@ -35,10 +52,11 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     #write julia benchmark file 
     for item in dict
 
-        julia_script_file_name = coll_tuned_bcast_algorithm * "_" * item.second * ".jl"
+        algo_name = replace(item.second , " " => "_")
+        julia_script_file_name = coll_tuned_bcast_algorithm * "_" * algo_name * ".jl"
         julia_script_file_name_output = julia_script_file_name * ".csv"
 
-        algo_name = replace(item.second , " " => "_")
+        
         file_name = "bcast_algo_" * algo_name * ".jl"
 
 
@@ -76,3 +94,6 @@ end
 
 include("Bench_Bcast.jl")
 include("Util.jl")
+include("Graph.jl")
+include("Bench_Graph.jl")
+

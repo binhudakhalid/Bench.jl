@@ -27,3 +27,4 @@ end
 
 
 include("Bench_rgraph.jl")
+include("Bench_rbarchart.jl")

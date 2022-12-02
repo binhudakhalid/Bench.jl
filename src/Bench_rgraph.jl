@@ -32,7 +32,7 @@ function imb_b_rgraph(T::Type, bufsize::Int, iters::Int, a::Int, path::String)
         @show "No csv file found in $(path)"
     end
 
-    plot_bench("Reduce"; xlims=(4, 2 ^ 27), ylims=(Inf, Inf), array_of_bench=data_csv_files_list)
+    plot_bench("Reduce"; xlims=(4, 2 ^ 27), ylims=(Inf, Inf), array_of_bench=data_csv_files_list, path=path)
 
 
     @show "----------------"

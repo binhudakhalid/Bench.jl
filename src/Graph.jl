@@ -20,7 +20,7 @@ end
 #julia --project=. plot.jl
 
 
-function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_bench::Array)
+function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_bench::Array, path::String)
     system = "Fugaku"
     xticks_range = exp2.(log2(first(xlims)):2:log2(last(xlims)))
     xticks = (xticks_range, format_bytes.(xticks_range))
@@ -53,7 +53,7 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
     
     #plot!(p, riken[:, 1], riken[:, 2]; label="Cache avoidance (Riken-CCS)", marker=:auto, markersize=3)
     #savefig(joinpath("/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/6/", "$(lowercase(name))-latency_ one_node_4rank.pdf"))
-    savefig(joinpath("/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/89/task0016/", "$(lowercase(name))-latency_ one_node_4rank.pdf"))
+    savefig(joinpath(path, "$(lowercase(name))-latency_ one_node_4rank1.pdf"))
 
 end
 

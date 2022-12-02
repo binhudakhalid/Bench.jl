@@ -1,21 +1,21 @@
-export BenchBroadcast
+export BenchScatter
 
-struct BenchBroadcast <: MPIBenchmark
+struct BenchScatter <: MPIBenchmark
     conf::Configuration
     name::String
 end
 
-function BenchBroadcast(T::Type=Float32;
-                   filename::Union{String,Nothing}="julia_imb_b_bcast.csv",
+function BenchScatter(T::Type=Float32;
+                   filename::Union{String,Nothing}="julia_imb_b_scatter.csv",
                    kwargs...,
                    )
-    return BenchBroadcast(
+    return BenchScatter(
         Configuration(T; filename, kwargs...),
         "IMB Reduce",
     )
 end
 
-function imb_b_bcast(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
+function imb_b_scatter(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
 
   
     #bcast
@@ -69,4 +69,4 @@ end
 =#
 
 
-benchmark(bench::BenchBroadcast, path::String) = run_collective(bench, imb_b_bcast, bench.conf, path)
+benchmark(bench::BenchScatter, path::String) = run_collective(bench, imb_b_scatter, bench.conf, path)

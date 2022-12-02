@@ -29,4 +29,4 @@ function imb_b_graph(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
  
     return "avgtime"
 end
-benchmark(bench::BenchGraph) = run_collective(bench, imb_b_graph, bench.conf)
+benchmark(bench::BenchGraph, path::String) = run_collective(bench, imb_b_graph, bench.conf, path)

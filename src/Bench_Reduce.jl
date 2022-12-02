@@ -1,25 +1,25 @@
-export BenchBroadcast
+export BenchReduce
 
-struct BenchBroadcast <: MPIBenchmark
+struct BenchReduce <: MPIBenchmark
     conf::Configuration
     name::String
 end
 
-function BenchBroadcast(T::Type=Float32;
-                   filename::Union{String,Nothing}="julia_imb_b_bcast.csv",
+function BenchReduce(T::Type=Float32;
+                   filename::Union{String,Nothing}="julia_imb_b_reduce.csv",
                    kwargs...,
                    )
-    return BenchBroadcast(
+    return BenchReduce(
         Configuration(T; filename, kwargs...),
         "IMB Reduce",
     )
 end
 
-function imb_b_bcast(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
+function imb_b_reduce(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
 
   
     #bcast
-    dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
+    #dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
     #@show dic_of_algorithm
     
     # write a jobscriptfile
@@ -69,4 +69,4 @@ end
 =#
 
 
-benchmark(bench::BenchBroadcast, path::String) = run_collective(bench, imb_b_bcast, bench.conf, path)
+benchmark(bench::BenchReduce, path::String) = run_collective(bench, imb_b_reduce, bench.conf, path)

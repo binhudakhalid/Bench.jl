@@ -5,8 +5,13 @@
 function get_tuned_algorithm_from_openmpi(function_name::String)
     dic_of_algorithm = Dict()
     
-    string_output = read(pipeline(`ompi_info --param coll tuned -l 9`, `grep "$(function_name) algorith"`), String)
+    string_output = read(pipeline(`ompi_info --param coll tuned -l 9`, `grep " $(function_name) algorith"`), String)
     
+    @show "------------------"
+    @show string_output
+    @show "------------------"
+
+
     start = findfirst("Can be locked down to choice of:", string_output)
     end1 = findfirst(". Only relevant", string_output)
     r = string_output[start[end]+1:end1[1]-1]
@@ -25,6 +30,11 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
     return dic_of_algorithm
 
 end
+
+
+
+
+
 
 initial_part = """
 #!/bin/bash

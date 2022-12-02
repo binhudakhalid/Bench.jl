@@ -16,6 +16,8 @@ function BenchGraph(T::Type=Float32;
 end
 
 function imb_b_graph(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
+
+    
     println("imb_b_graph")
     str1 = "coll_tuned_bcast_algorithm_ignore.jl.csv,coll_tuned_bcast_algorithm_knomial_tree.jl.csv"
 

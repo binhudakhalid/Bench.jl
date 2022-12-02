@@ -52,7 +52,9 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
 
     
     #plot!(p, riken[:, 1], riken[:, 2]; label="Cache avoidance (Riken-CCS)", marker=:auto, markersize=3)
-    savefig(joinpath("/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/6/", "$(lowercase(name))-latency_ one_node_4rank.pdf"))
+    #savefig(joinpath("/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/6/", "$(lowercase(name))-latency_ one_node_4rank.pdf"))
+    savefig(joinpath("/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/89/task0016/", "$(lowercase(name))-latency_ one_node_4rank.pdf"))
+
 end
 
 #plot_bench("Allreduce"; xlims=(4, 2 ^ 22.5), ylims=(10 ^ -6, Inf))

@@ -13,7 +13,13 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
 
 
     start = findfirst("Can be locked down to choice of:", string_output)
+    if start === nothing
+        start = findfirst("Can be locked down to any of:", string_output)
+    end
+
     end1 = findfirst(". Only relevant", string_output)
+    @show start
+    @show end1
     r = string_output[start[end]+1:end1[1]-1]
     
     list = split(r, "," )
@@ -23,7 +29,9 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
         #dic_of_algoritm[]
         #dd = replace(tempList[1], ":" => "")
         key = replace(tempList[1], r"[: ]" => "")
-        dic_of_algorithm[key] = tempList[2]
+        value = replace(tempList[2], ")" => "", "(" => "", " " => "_", "+"=>"plus")
+
+        dic_of_algorithm[key] = value
     end
     
     @show dic_of_algorithm

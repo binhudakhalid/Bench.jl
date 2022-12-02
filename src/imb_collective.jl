@@ -1,3 +1,11 @@
+mutable struct BenchData
+    MPIBenchmarks_function_name::String
+    dic_of_algorithm::Dict
+    algorithm_name::String
+    job_script_file_name::String
+    julia_script_file_name_output_array::Union{Array, Nothing}
+end
+
 function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configuration, path::String)
 
     # To run it requires
@@ -76,6 +84,35 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
         algo = "coll_tuned_gather_algorithm"
         a = write_job_script_file(dic_of_algorithm, "coll_tuned_gather_algorithm", MPIBenchmarks_function_name)
         #submit_sbatch(a)
+    
+    elseif  String(string(func)) == "imb_b_allreduce"
+
+        MPIBenchmarks_function_name = "OSUAllreduce"
+        dic_of_algorithm = get_tuned_algorithm_from_openmpi("allreduce") # get_all_bcast_algorithm()
+        algorithm_name = "coll_tuned_allreduce_algorithm"
+        job_script_file_name = algorithm_name * "_" * "jobscript.sh"
+        
+        BenchData1 = BenchData(MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
+        func(conf.T, 1, 10 , 3, dic_of_algorithm)
+        a = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name)
+        submit_sbatch(BenchData1.job_script_file_name)
+        
+        @show "****************"
+        @show BenchData1
+        @show "****************"
+
+        ## Draw graph
+        ## Draw praph
+
+        #=
+        func(conf.T, 1, 10 , 3, dic_of_algorithm)
+        algo = "coll_tuned_allreduce_algorithm"
+        a = write_job_script_file(dic_of_algorithm, algo, MPIBenchmarks_function_name)
+        #submit_sbatch(a)=#
+
+
+
+
 
     end
 
@@ -140,18 +177,16 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
 end
 
 function submit_sbatch(jobscript_file_name::String)
-
     @show "Before calling sbatch" 
+    @show jobscript_file_name
     run(`sbatch $(jobscript_file_name)`)
-
-
 end
 
 include("Bench_Bcast.jl")
 include("Bench_Scatter.jl")
 include("Bench_Reduce.jl")
 include("Bench_Gather.jl")
+include("Bench_Allreduce.jl")
 include("Util.jl")
 include("Graph.jl")
 include("Bench_Graph.jl")
-

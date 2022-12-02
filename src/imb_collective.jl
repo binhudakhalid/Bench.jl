@@ -1,4 +1,5 @@
 mutable struct BenchData
+    task_name::String
     MPIBenchmarks_function_name::String
     dic_of_algorithm::Dict
     algorithm_name::String
@@ -87,20 +88,31 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
     
     elseif  String(string(func)) == "imb_b_allreduce"
 
+        task_name = "task0016" 
         MPIBenchmarks_function_name = "OSUAllreduce"
         dic_of_algorithm = get_tuned_algorithm_from_openmpi("allreduce") # get_all_bcast_algorithm()
         algorithm_name = "coll_tuned_allreduce_algorithm"
         job_script_file_name = algorithm_name * "_" * "jobscript.sh"
         
-        BenchData1 = BenchData(MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
-        func(conf.T, 1, 10 , 3, dic_of_algorithm)
-        a = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name)
-        submit_sbatch(BenchData1.job_script_file_name)
-        
-        @show "****************"
-        @show BenchData1
-        @show "****************"
+        BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
+
+        mkdir(BenchData1.task_name)
+        func(conf.T, 1, 10 , 3, dic_of_algorithm)
+        a = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1)
+        write_graph_data(BenchData1)
+        
+        #write_graph_data_c(BenchData1)
+
+        @show "*****mememe***********"
+        @show BenchData1
+        @show "******after**********"
+        @show ")))))))))))))))))))))))))))))))"
+        @show BenchData1.job_script_file_name
+        @show ")))))))))))))))))))))))))))))))"
+        submit_sbatch(BenchData1)
+
+        #write_graph_data_c(BenchData1)
         ## Draw graph
         ## Draw praph
 
@@ -126,11 +138,10 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
     return nothing
 end
 
-function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, MPIBenchmarks_function_name::String)
+function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, MPIBenchmarks_function_name::String, benchData::BenchData )
 
     line = ""
     julia_script_file_name_output_array = String[]
-
     #write julia benchmark file 
     for item in dict
 
@@ -148,7 +159,8 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
         using MPIBenchmarks
         benchmark($(MPIBenchmarks_function_name)(;filename="$julia_script_file_name_output"))
         """
-        open(julia_script_file_name, "w") do file
+        @show "}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
+        open(benchData.task_name*"/"* julia_script_file_name, "w") do file
             write(file, julia_benchmark_script)
         end
 
@@ -161,25 +173,48 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     job_script_file_content = string(initial_part, line)
  
     # Write job script file
-    open(job_script_file_name, "w") do file
+    open(benchData.task_name * "/" * job_script_file_name, "w") do file
         write(file, job_script_file_content)
     end
 
-    @show "--------------------------------------"
-    julia_script_file_name_output_array_string = string(julia_script_file_name_output_array)
-    @show julia_script_file_name_output_array_string
-    # Write graph data to a file
-    open("graph_data" * ".txt", "w") do file
-        write(file, julia_script_file_name_output_array_string)
-    end
+    benchData.julia_script_file_name_output_array = julia_script_file_name_output_array
+
 
     return job_script_file_name
 end
 
-function submit_sbatch(jobscript_file_name::String)
+function submit_sbatch(benchData::BenchData)
+
+    
     @show "Before calling sbatch" 
-    @show jobscript_file_name
-    run(`sbatch $(jobscript_file_name)`)
+
+    #@show "$(benchData.task_name)/$(benchData.job_script_file_name)"
+    #cd("$(benchData.task_name)")
+    #run(`sbatch $(benchData.task_name)/$(benchData.job_script_file_name)`)
+
+    cd("task0016/") do
+        run(`sbatch $(benchData.job_script_file_name)`)
+    end
+
+
+
+end
+
+function write_graph_data(benchData::BenchData)
+    julia_script_file_name_output_array_string = string(benchData.julia_script_file_name_output_array)
+    @show julia_script_file_name_output_array_string
+    # Write graph data to a file
+    open("graph_data3" * ".txt", "w") do file
+        write(file, julia_script_file_name_output_array_string)
+    end
+
+
+end
+function write_graph_data_c(benchData::BenchData)
+ 
+    @show benchData.algorithm_name="a009"
+
+
 end
 
 include("Bench_Bcast.jl")

@@ -51,6 +51,8 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
     ylims,
     yscale = :log10,
     legend=:topleft,
+    left_margin=15Plots.mm,
+    bottom_margin=15Plots.mm,
     )
 
     #julia  = readdlm(joinpath(@__DIR__, "one_node_4rank_1.csv"), ',', Float64; skipstart=1)
@@ -64,7 +66,7 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
             temp_name = split(item, "/")[end]
             value = replace(temp_name, "coll_tuned_allreduce_algorithm_" => "", ".jl.csv" => "")
-            plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=3)
+            plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2)
         end
     end
     savefig(joinpath(path, "graph.pdf"))

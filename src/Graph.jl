@@ -17,17 +17,31 @@ function format_bytes(bytes)
     end
     return string(val) * unit_string
 end
-#julia --project=. plot.jl
-
 
 function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_bench::Array, path::String)
-    system = "Fugaku"
+    @show "=++++++++++++++++++++++++++++++++"
+    @show name
+    @show array_of_bench
+    @show path
+    @show "=++++++++++++++++++++++++++++++++"
+    function_name = ""
+
+    s = open("$(path)/graph_data3.txt") do file
+        function_name = read(file, String)
+        @show name
+    end
+
+    @show "---------------------------------------------444444444444444444444444444444444444444"
+
+    @show function_name
+    @show "---------------------------------------------444444444444444444444444444444444444444"
+
     xticks_range = exp2.(log2(first(xlims)):2:log2(last(xlims)))
     xticks = (xticks_range, format_bytes.(xticks_range))
 
 
     p = plot(;
-    title = "Latency of MPI $(name) @ local (1 nodes, 4 ranks)",
+    title = function_name, #"Latency of MPI $(name) @ local (1 nodes, 4 ranks)",
     titlefont=font(12),
     xlabel = "message size",
     xscale = :log10,
@@ -43,20 +57,21 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
     @show @__DIR__
     @show "joinpathjoinpath"
 
+    #/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/96/100/task_2/coll_tuned_allreduce_algorithm_basic_linear.jl.csv
+
     for item in array_of_bench
-        julia  = readdlm("$(item)", ',', Float64; skipstart=1)
-        plot!(p, julia[:, 1],  julia[:, 5];  label="without cache avoidance", marker=:auto, markersize=3)
+        if !contains(item, ".pdf")
+            julia  = readdlm("$(item)", ',', Float64; skipstart=1)
+            temp_name = split(item, "/")[end]
+            value = replace(temp_name, "coll_tuned_allreduce_algorithm_" => "", ".jl.csv" => "")
+            plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=3)
+        end
     end
-
-
-
-    
-    #plot!(p, riken[:, 1], riken[:, 2]; label="Cache avoidance (Riken-CCS)", marker=:auto, markersize=3)
-    #savefig(joinpath("/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/6/", "$(lowercase(name))-latency_ one_node_4rank.pdf"))
-    savefig(joinpath(path, "$(lowercase(name))-latency_ one_node_4rank1.pdf"))
+    savefig(joinpath(path, "graph.pdf"))
 
 end
 
 #plot_bench("Allreduce"; xlims=(4, 2 ^ 22.5), ylims=(10 ^ -6, Inf))
 #plot_bench("Gatherv"; xlims=(1, 2 ^ 20.5))
 #plot_bench("Reduce"; xlims=(4, 2 ^ 27), ylims=(Inf, Inf))
+#julia --project=. plot.jl

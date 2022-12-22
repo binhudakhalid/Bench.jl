@@ -7,7 +7,7 @@ mutable struct BenchData
     julia_script_file_name_output_array::Union{Array, Nothing}
 end
 
-function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configuration, path::String)
+function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configuration, task::String, path::String)
 
     # To run it requires
         #1- Path of the script that start the program
@@ -15,6 +15,7 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
         #3- OpenMPI param bcast
 
     @show path
+    @show task
     #@show benchmark
     #@show conf
 
@@ -87,8 +88,8 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
         #submit_sbatch(a)
     
     elseif  String(string(func)) == "imb_b_allreduce"
-
-        task_name = "task0016" 
+        
+        task_name = task
         MPIBenchmarks_function_name = "OSUAllreduce"
         dic_of_algorithm = get_tuned_algorithm_from_openmpi("allreduce") # get_all_bcast_algorithm()
         algorithm_name = "coll_tuned_allreduce_algorithm"
@@ -96,7 +97,7 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
         
         BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
-
+        @show BenchData1.task_name
         mkdir(BenchData1.task_name)
         func(conf.T, 1, 10 , 3, dic_of_algorithm)
         a = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1)
@@ -122,8 +123,11 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
         a = write_job_script_file(dic_of_algorithm, algo, MPIBenchmarks_function_name)
         #submit_sbatch(a)=#
 
+    elseif  String(string(func)) == "imb_b_intel_allreduce"
 
 
+
+    println("The intel MPI")
 
 
     end
@@ -192,7 +196,7 @@ function submit_sbatch(benchData::BenchData)
     #cd("$(benchData.task_name)")
     #run(`sbatch $(benchData.task_name)/$(benchData.job_script_file_name)`)
 
-    cd("task0016/") do
+    cd(benchData.task_name) do
         run(`sbatch $(benchData.job_script_file_name)`)
     end
 
@@ -201,11 +205,15 @@ function submit_sbatch(benchData::BenchData)
 end
 
 function write_graph_data(benchData::BenchData)
+
+    @show "00000000000000000000000000000000000000000000000000000000000))))))))))))))))))))))))))))))))))))))*******************"
+    @show benchData
     julia_script_file_name_output_array_string = string(benchData.julia_script_file_name_output_array)
     @show julia_script_file_name_output_array_string
     # Write graph data to a file
-    open("graph_data3" * ".txt", "w") do file
-        write(file, julia_script_file_name_output_array_string)
+    open("$(benchData.task_name)/graph_data3" * ".txt", "w") do file
+        #write(file, julia_script_file_name_output_array_string)
+        write(file, benchData.MPIBenchmarks_function_name)
     end
 
 
@@ -225,3 +233,4 @@ include("Bench_Allreduce.jl")
 include("Util.jl")
 include("Graph.jl")
 include("Bench_Graph.jl")
+include("Bench_Intel_Allreduce.jl")

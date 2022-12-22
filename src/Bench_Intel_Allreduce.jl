@@ -1,21 +1,21 @@
-export BenchAllreduce
+export BenchIntelAllreduce
 
-struct BenchAllreduce <: MPIBenchmark
+struct BenchIntelAllreduce <: MPIBenchmark
     conf::Configuration
     name::String
 end
 
-function BenchAllreduce(T::Type=Float32;
+function BenchIntelAllreduce(T::Type=Float32;
                    filename::Union{String,Nothing}="julia_imb_b_allreduce.csv",
                    kwargs...,
                    )
-    return BenchAllreduce(
+    return BenchIntelAllreduce(
         Configuration(T; filename, kwargs...),
         "IMB Reduce",
     )
 end
 
-function imb_b_allreduce(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
+function imb_b_intel_allreduce(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
 
   
     #bcast
@@ -69,4 +69,4 @@ end
 =#
 
 
-benchmark(bench::BenchAllreduce, task::String, path::String) = run_collective(bench, imb_b_allreduce, bench.conf, task, path)
+benchmark(bench::BenchIntelAllreduce, path::String) = run_collective(bench, imb_b_intel_allreduce, bench.conf, path)

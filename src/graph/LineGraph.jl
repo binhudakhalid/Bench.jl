@@ -1,30 +1,23 @@
-export BenchRGraph
+export LineGraph
 
-struct BenchRGraph <: MPIBenchmark
+struct LineGraph <: MPIBenchmark
     conf::Configuration
     name::String
 end
 
-function BenchRGraph(T::Type=Float32;
-                   filename::Union{String,Nothing}="julia_imb_b_rgraph.csv",
+function LineGraph(T::Type=Float32;
+                   filename::Union{String,Nothing}="LineGraph",
                    kwargs...,
                    )
-    return BenchRGraph(
+    return LineGraph(
         Configuration(T; filename, kwargs...),
-        "IMB Reduce",
+        "LineGraph",
     )
 end
 
-function imb_b_rgraph(T::Type, bufsize::Int, iters::Int, a::Int, path::String)
+function imb_b_rgraph(path::String)
 
-    @show "imb_b_rgraph"
-    @show "here"
-    @show path
-    @show "0000000000000000000000000000000000000000000"
-    #read from a file
-
-    #get all from the folder
-
+    @show "Drawing graph"
     data_csv_files_list = get_csv_file_from_path(path)
   
     # error handling
@@ -34,19 +27,6 @@ function imb_b_rgraph(T::Type, bufsize::Int, iters::Int, a::Int, path::String)
 
     plot_bench("Reduce"; xlims=(4, 2 ^ 22), ylims=(Inf, Inf), array_of_bench=data_csv_files_list, path=path)
 
-
-    @show "----------------"
-    @show data_csv_files_list
-    @show "----------------"
-
-
-
-
-
-    
-
-
- 
     return "avgtime"
 end
 
@@ -63,4 +43,6 @@ function get_csv_file_from_path(path::String)
 end
 
  
-benchmark(bench::BenchRGraph, path::String) = run_graph(bench, imb_b_rgraph, bench.conf, path)
+benchmark(bench::LineGraph, path::String) = imb_b_rgraph(path)
+
+include("graph_util.jl")

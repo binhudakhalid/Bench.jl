@@ -19,43 +19,19 @@ function format_bytes(bytes)
 end
 
 function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_bench::Array, path::String)
-    @show "=++++++++++++++++++++++++++++++++"
-    @show name
-    @show array_of_bench
-    @show path
-    @show "=++++++++++++++++++++++++++++++++"
     function_name = ""
 
-    s = open("$(path)/graph_data3.txt") do file
+    open("$(path)/graph_data3.txt") do file
         function_name = read(file, String)
-        @show name
     end
-
-    @show "---------------------------------------------444444444444444444444444444444444444444"
-
-    @show function_name
-    @show "---------------------------------------------444444444444444444444444444444444444444"
 
     xticks_range = exp2.(log2(first(xlims)):2:log2(last(xlims)))
     xticks = (xticks_range, format_bytes.(xticks_range))
 
+    p = plot(; title = function_name, titlefont=font(12), xlabel = "message size",
+    xscale = :log10, xlims, xticks, ylabel = "time [sec]",
+    ylims, yscale = :log10, legend=:topleft, left_margin=15Plots.mm, bottom_margin=15Plots.mm)
 
-    p = plot(;
-    title = function_name, #"Latency of MPI $(name) @ local (1 nodes, 4 ranks)",
-    titlefont=font(12),
-    xlabel = "message size",
-    xscale = :log10,
-    xlims,
-    xticks,
-    ylabel = "time [sec]",
-    ylims,
-    yscale = :log10,
-    legend=:topleft,
-    left_margin=15Plots.mm,
-    bottom_margin=15Plots.mm,
-    )
-
-    #julia  = readdlm(joinpath(@__DIR__, "one_node_4rank_1.csv"), ',', Float64; skipstart=1)
     @show @__DIR__
     @show "joinpathjoinpath"
 

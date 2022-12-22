@@ -231,6 +231,9 @@ include("Bench_Reduce.jl")
 include("Bench_Gather.jl")
 include("Bench_Allreduce.jl")
 include("Util.jl")
-include("Graph.jl")
-include("Bench_Graph.jl")
 include("Bench_Intel_Allreduce.jl")
+
+
+#include("graph/img_graph.jl")
+include("graph/BarChart.jl")
+include("graph/LineGraph.jl") 

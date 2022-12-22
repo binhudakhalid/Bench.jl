@@ -26,5 +26,6 @@ end
 
 
 
-include("Bench_rgraph.jl")
-include("Bench_rbarchart.jl")
+#include("graph/Bench_rgraph.jl")
+#include("graph/Bench_rbarchart.jl")
+#include("graph/Graph.jl")

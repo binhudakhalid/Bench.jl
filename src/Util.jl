@@ -56,8 +56,8 @@ initial_part = """
 #SBATCH --mem-per-cpu 10G         ## [Memory per CPU]  - A node have many CPUs
 #SBATCH -t 00:30:00
 
-module reset
-module load lang       # loading the gateway module
-module load JuliaHPC   # loading the latest JuliaHPC
+###module reset
+###module load lang       # loading the gateway module
+###module load JuliaHPC   # loading the latest JuliaHPC
 
 """

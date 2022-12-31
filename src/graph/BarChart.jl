@@ -63,4 +63,4 @@ function imb_b_rbarchart(path::String)
 
 end
 
-benchmark(bench::BarChart, path::String) = imb_b_rbarchart(path::String) #run_graph(bench, imb_b_rbarchart, bench.conf, path)
+benchmark(bench::BarChart, path::String) = imb_b_rbarchart(path::String)

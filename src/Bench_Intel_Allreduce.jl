@@ -17,9 +17,11 @@ end
 
 function imb_b_intel_allreduce(T::Type, bufsize::Int, iters::Int, a::Int, dict::Dict)
 
+    ##@show "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+    ##@show Dict_all_reduce_variant
   
     #bcast
-    dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
+    #dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
     #@show dic_of_algorithm
     
     # write a jobscriptfile
@@ -69,4 +71,5 @@ end
 =#
 
 
-benchmark(bench::BenchIntelAllreduce, path::String) = run_collective(bench, imb_b_intel_allreduce, bench.conf, path)
+benchmark(bench::BenchIntelAllreduce, task::String, path::String) = run_collective(bench, imb_b_intel_allreduce, bench.conf, task, path) 
+

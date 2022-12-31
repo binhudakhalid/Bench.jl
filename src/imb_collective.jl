@@ -6,6 +6,11 @@ mutable struct BenchData
     job_script_file_name::String
     julia_script_file_name_output_array::Union{Array, Nothing}
 end
+export asd
+function asd(a::String)
+    println(a)
+    
+end
 
 function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configuration, task::String, path::String)
 
@@ -94,40 +99,31 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
         dic_of_algorithm = get_tuned_algorithm_from_openmpi("allreduce") # get_all_bcast_algorithm()
         algorithm_name = "coll_tuned_allreduce_algorithm"
         job_script_file_name = algorithm_name * "_" * "jobscript.sh"
-        
+
         BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
-        @show BenchData1.task_name
         mkdir(BenchData1.task_name)
         func(conf.T, 1, 10 , 3, dic_of_algorithm)
-        a = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1)
+        write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1)
         write_graph_data(BenchData1)
-        
-        #write_graph_data_c(BenchData1)
-
-        @show "*****mememe***********"
-        @show BenchData1
-        @show "******after**********"
-        @show ")))))))))))))))))))))))))))))))"
-        @show BenchData1.job_script_file_name
-        @show ")))))))))))))))))))))))))))))))"
         submit_sbatch(BenchData1)
-
-        #write_graph_data_c(BenchData1)
-        ## Draw graph
-        ## Draw praph
-
-        #=
-        func(conf.T, 1, 10 , 3, dic_of_algorithm)
-        algo = "coll_tuned_allreduce_algorithm"
-        a = write_job_script_file(dic_of_algorithm, algo, MPIBenchmarks_function_name)
-        #submit_sbatch(a)=#
-
+ 
     elseif  String(string(func)) == "imb_b_intel_allreduce"
+        task_name = task
+        MPIBenchmarks_function_name = "IMBAllreduce" # this should the method name of MPIBenchmark.jl 
+        #dic_of_algorithm = get_tuned_algorithm_from_intel("allreduce") # get_all_bcast_algorithm()
+        @show dict_all_reduce_variant
+        algorithm_name = "intel_allreduce_algorithm"
+        job_script_file_name = algorithm_name * "_" * "jobscript.sh"
 
+        BenchData1 = BenchData(task_name, MPIBenchmarks_function_name, dict_all_reduce_variant, algorithm_name, job_script_file_name, nothing)
 
+        mkdir(BenchData1.task_name)
+        func(conf.T, 1, 10 , 3, dict_all_reduce_variant)
+        write_job_script_file_intel(dict_all_reduce_variant, "I_MPI_ADJUST_ALLREDUCE", MPIBenchmarks_function_name, BenchData1)
+        write_graph_data(BenchData1)
+        #submit_sbatch(BenchData1)
 
-    println("The intel MPI")
 
 
     end
@@ -187,6 +183,52 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     return job_script_file_name
 end
 
+function write_job_script_file_intel(dict::Dict, function_name::String, MPIBenchmarks_function_name::String, benchData::BenchData )
+    # I_MPI_ADJUST_ALLREDUCE
+    line = ""
+    julia_script_file_name_output_array = String[]
+    #write julia benchmark file 
+    for item in dict
+
+        algo_name = replace(item.second , " " => "_")
+        julia_script_file_name::String = function_name * "_" * algo_name * ".jl"
+        julia_script_file_name_output = julia_script_file_name * ".csv"
+        
+
+        push!( julia_script_file_name_output_array,  julia_script_file_name_output  )
+        
+
+        julia_benchmark_script = """
+        using MPIBenchmarks
+        benchmark($(MPIBenchmarks_function_name)(;filename="$julia_script_file_name_output"))
+        """
+        @show "}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
+        open(benchData.task_name*"/"* julia_script_file_name, "w") do file
+            write(file, julia_benchmark_script)
+        end
+
+        line = line * "mpiexec -genv I_MPI_DEBUG=6 -genv $(function_name)=$(item.first) -np 4 julia --project $(julia_script_file_name) \n"
+
+    end
+    
+
+    job_script_file_name = function_name * "_" * "jobscript.sh"
+    job_script_file_content = string(initial_part, line)
+ 
+    # Write job script file
+    open(benchData.task_name * "/" * job_script_file_name, "w") do file
+        write(file, job_script_file_content)
+    end
+
+    benchData.julia_script_file_name_output_array = julia_script_file_name_output_array
+
+
+    return job_script_file_name
+end
+
+
+
+
 function submit_sbatch(benchData::BenchData)
 
     
@@ -237,3 +279,7 @@ include("Bench_Intel_Allreduce.jl")
 #include("graph/img_graph.jl")
 include("graph/BarChart.jl")
 include("graph/LineGraph.jl") 
+
+
+#intel
+include("intel_mpi/dict_intel_variants.jl")

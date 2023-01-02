@@ -28,7 +28,9 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
         tempList = split(temp, " "; limit = 2 )
         #dic_of_algoritm[]
         #dd = replace(tempList[1], ":" => "")
-        key = replace(tempList[1], r"[: ]" => "")
+        key = replace(tempList[1], r"[: ]" => "", ".jl.csv" => "")
+        key = match(r"\d+", key).match
+
         value = replace(tempList[2], ")" => "", "(" => "", " " => "_", "+"=>"plus")
 
         dic_of_algorithm[key] = value

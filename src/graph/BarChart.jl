@@ -86,7 +86,16 @@ function set_name_format!(value)
 
     value = replace(value, "I_MPI_ADJUST_ALLREDUCE_" => "",
                            "I_MPI_ADJUST_BCAST_" => "",
-    ".jl.csv" => "")
+                           "coll_tuned_allreduce_algorithm_" => "",
+                           "coll_tuned_bcast_algorithm_" => "",
+                           "coll_tuned_alltoall_algorithm_" => "",
+                           "coll_tuned_alltoallv_algorithm_" => "",
+                           "coll_tuned_allgather_algorithm_" => "",
+                           "coll_tuned_allgatherv_algorithm_" => "",
+                           "coll_tuned_scatter_algorithm_" => "",
+                           "coll_tuned_reduce_algorithm_" => "",
+                           "coll_tuned_gather_algorithm_" => "",
+        ".jl.csv" => "")
 
 
     if length(value) > 20

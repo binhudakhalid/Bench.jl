@@ -38,8 +38,21 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
     #/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/96/100/task_2/coll_tuned_allreduce_algorithm_basic_linear.jl.csv
 
     for item in array_of_bench
-        if !contains(item, ".pdf")
+        if !contains(item, ".pdf") && filesize("$(item)") > 0
+            @show "++++++++++++++++++++++++++++++++++++++++++++++++"
+            @show "$(item)"
+
+            @show filesize("$(item)")
+            data = readdlm("$(item)", ',')
+            if isempty(data)
+                println("The CSV file is empty.")
+            else
+                println("The CSV file is not empty.")
+            end
+            @show "++++++++++++++++++++++++++++++++++++++++++++++++"
+
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
+            @show "tttttttttttt"
             temp_name = split(item, "/")[end]
             value = replace(temp_name, "coll_tuned_allreduce_algorithm_" => "", ".jl.csv" => "")
             plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2, legendfontsize=4, background_color_legend=nothing)#legend=:outertop)

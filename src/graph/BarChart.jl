@@ -21,13 +21,15 @@ function imb_b_rbarchart(path::String)
     @show "Drawing Bar Chart1"
     data_csv_files_list = get_csv_file_from_path(path)
     array_of_bench = data_csv_files_list
+    @show array_of_bench
     y_list = []
     xx_list = []
     x_list = []
     index = 1
-    
+    @show "here"
     for item in array_of_bench
-        if !contains(item, ".pdf")
+        if !contains(item, ".pdf") && filesize("$(item)") > 0
+            @show filesize("$(item)")
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
             temp_name = split(item, "/")[end]
             #@show "--------------"
@@ -51,10 +53,13 @@ function imb_b_rbarchart(path::String)
     max_y_list = maximum(y_list)
     @show max_y_list = maximum(y_list)
 
-    #@show xx
+    @show "-------------------------"
+    @show xx
     #@show length(xx)
-    #@show x_list
-    #@show y_list
+    @show x_list
+    @show y_list
+    @show "-------------------------"
+
 
 
 
@@ -68,9 +73,10 @@ function imb_b_rbarchart(path::String)
   
     # annotate the bars of the chart
     #if max_y_list >
+    mid = max_y_list/2
     i = 1
     for item in y_list
-        annotate!((6,i,"$(item)"))
+        annotate!((mid,i,"$(item)"))
         i = i + 1
     end
 

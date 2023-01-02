@@ -42,9 +42,11 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
             temp_name = split(item, "/")[end]
             value = replace(temp_name, "coll_tuned_allreduce_algorithm_" => "", ".jl.csv" => "")
-            plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2)
+            plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2, legendfontsize=4, background_color_legend=nothing)#legend=:outertop)
         end
-    end
+    end#background_color_legend=nothing
+
+    
     savefig(joinpath(path, "graph.pdf"))
 
 end

@@ -30,9 +30,9 @@ function imb_b_rbarchart(path::String)
         if !contains(item, ".pdf")
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
             temp_name = split(item, "/")[end]
-            @show "--------------"
-            @show temp_name
-            @show "--------------"
+            #@show "--------------"
+            #@show temp_name
+            #@show "--------------"
 
             #value = replace(temp_name, "coll_tuned_allreduce_algorithm_" => "", ".jl.csv" => "")
             value = set_name_format!(temp_name)
@@ -48,11 +48,13 @@ function imb_b_rbarchart(path::String)
     xx = xx_list # [1,2,3,4,5,6,7,8,9,10,11,12]#
     x =  x_list 
     y = y_list 
+    max_y_list = maximum(y_list)
+    @show max_y_list = maximum(y_list)
 
-    @show xx
-    @show length(xx)
-    @show x_list
-    @show y_list
+    #@show xx
+    #@show length(xx)
+    #@show x_list
+    #@show y_list
 
 
 
@@ -65,6 +67,7 @@ function imb_b_rbarchart(path::String)
     graph_obj = Plots.bar(x, y, orientation = :h,  yticks=(1:20, xx), left_margin=44Plots.mm, bottom_margin=6Plots.mm,  xlabel = "time (us)", ylabel = "algorithm Name", title = "$(function_name)", legend=:false)
   
     # annotate the bars of the chart
+    #if max_y_list >
     i = 1
     for item in y_list
         annotate!((6,i,"$(item)"))

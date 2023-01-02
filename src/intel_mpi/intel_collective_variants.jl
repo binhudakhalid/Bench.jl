@@ -60,8 +60,8 @@ dict_gather_variant = Dict{Integer, String}(
 # I_MPI_ADJUST_GATHERV
 dict_gatherv_variant = Dict{Integer, String}(
     1 => "Linear",
-    2 => "Topology_aware_linear",
-    3 => "Knomial")
+    2 => "Topology_aware_linear")
+    # 3 => "Knomial") This is not available
 
 # I_MPI_ADJUST_ALLTOALL
 dict_allToall_variant = Dict{Integer, String}(

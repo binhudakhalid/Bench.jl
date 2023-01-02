@@ -128,6 +128,8 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
 
     end
 
+
+
     
 
     
@@ -253,7 +255,7 @@ function write_graph_data(benchData::BenchData)
     julia_script_file_name_output_array_string = string(benchData.julia_script_file_name_output_array)
     @show julia_script_file_name_output_array_string
     # Write graph data to a file
-    open("$(benchData.task_name)/graph_data3" * ".txt", "w") do file
+    open("$(benchData.task_name)/graph_data45" * ".txt", "w") do file
         #write(file, julia_script_file_name_output_array_string)
         write(file, benchData.MPIBenchmarks_function_name)
     end
@@ -282,4 +284,5 @@ include("graph/LineGraph.jl")
 
 
 #intel
-include("intel_mpi/dict_intel_variants.jl")
+include("intel_mpi/intel_collective_variants.jl")
+include("intel_mpi/intel_collective_fun.jl")

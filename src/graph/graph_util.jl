@@ -21,7 +21,7 @@ end
 function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_bench::Array, path::String)
     function_name = ""
 
-    open("$(path)/graph_data3.txt") do file
+    open("$(path)/graph_data45.txt") do file
         function_name = read(file, String)
     end
 

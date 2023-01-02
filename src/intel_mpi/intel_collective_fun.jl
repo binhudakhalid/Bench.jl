@@ -1,55 +1,65 @@
 
 export bench1
-function bench1(fun_name::String, task::String, path::String) # BenchBroadcast(), @__FILE__)
+function bench1(fun_name::String, task::String, path::String, lib::String) # BenchBroadcast(), @__FILE__)
     @show task
     @show path
+    
+        #if is_mpi_lib_is("intel")
+        #    intel_all_reduce(task::String, path::String)
+        #else
+        #end
 
-    if fun_name == "MPI_Allreduce"
-        is_mpi_lib_is("intel")
-        intel_all_reduce(task::String, path::String)
+    if fun_name == "MPI_Allreduce" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_all_reduce(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Bcast" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_bcast(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Allgather" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_all_gather(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Allgatherv" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_all_gatherv(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Gather" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_gather(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Gatherv" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_gatherv(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Alltoall" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_all_to_all(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Alltoallv" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_all_to_allv(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Reduce" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_reduce(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Scatter" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_scatter(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Scatterv" && lib == "IntelMPI"
+        is_mpi_lib_is("IntelMPI") == true ? intel_scatterv(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+    
+    # OPEN MPI
 
-    elseif fun_name == "MPI_Bcast"
-        is_mpi_lib_is("intel")
-        intel_bcast(task::String, path::String)
+    elseif fun_name == "MPI_Allreduce" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_reduce(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Bcast" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_bcast(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Alltoall" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_to_all(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Alltoallv" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_to_allv(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Allgather" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_gather(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Allgatherv" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_gatherv(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Scatter" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_scatter(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Reduce" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_reduce(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    elseif fun_name == "MPI_Gather" && lib == "OpenMPI"
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_gather(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
 
-    elseif fun_name == "MPI_Allgather"
-        is_mpi_lib_is("intel")
-        intel_all_gather(task::String, path::String)
-
-    elseif fun_name == "MPI_Allgatherv"
-        is_mpi_lib_is("intel")
-        intel_all_gatherv(task::String, path::String)
-
-    elseif fun_name == "MPI_Gather"
-        is_mpi_lib_is("intel")
-        intel_gather(task::String, path::String)
-
-    elseif fun_name == "MPI_Gatherv"
-        @show "MPI_Gatherv"
-        is_mpi_lib_is("intel")
-        intel_gatherv(task::String, path::String)
-
-    elseif fun_name == "MPI_Alltoall"
-        is_mpi_lib_is("intel")
-        intel_all_to_all(task, path)
-
-    elseif fun_name == "MPI_Alltoallv"
-        is_mpi_lib_is("intel")
-        intel_all_to_allv(task, path)
-
-    elseif fun_name == "MPI_Reduce"
-        is_mpi_lib_is("intel")
-        intel_reduce(task, path)
+    #elseif fun_name == "MPI_Gatherv" && lib == "OpenMPI"
+    #    is_mpi_lib_is("OpenMPI") == true ? openmpi_gatherv(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+    #elseif fun_name == "MPI_Scatterv" && lib == "OpenMPI"
+    #    is_mpi_lib_is("OpenMPI") == true ? openmpi_scatterv(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
 
 
-    elseif fun_name == "MPI_Scatter"
-        is_mpi_lib_is("intel")
-        intel_scatter(task, path)
-
-    elseif fun_name == "MPI_Scatterv"
-        is_mpi_lib_is("intel")
-        intel_scatterv(task, path)
-
+    
     else
         println("unable to find the function name")
     end
@@ -235,9 +245,59 @@ function intel_scatterv(task::String, path::String)
 end
 
 
+
+# OPEN MPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+function openmpi_all_reduce(task::String, path::String)
+
+end
+
+function openmpi_bcast(task::String, path::String)
+
+end
+
+function openmpi_all_to_all(task::String, path::String)
+
+end
+function openmpi_all_to_allv(task::String, path::String)
+
+end
+
+function openmpi_all_gather(task::String, path::String)
+
+end
+
+function openmpi_all_gatherv(task::String, path::String)
+
+end
+
+function openmpi_scatter(task::String, path::String)
+
+end
+
+function openmpi_reduce(task::String, path::String)
+
+end
+
+function openmpi_gather(task::String, path::String)
+
+end
+
 function is_mpi_lib_is(name::String)
 
-    return true
+    #using MPI
+    impl, version = MPI.identify_implementation()
+
+    if name == impl #"IntelMPI"
+        return true
+    else
+        return false
+    end
+    #println("asdasdasdads")
+    println("THe:: ", impl)
+    println("THe:: ", version)
+
+
+    return false
 end
 
 #=

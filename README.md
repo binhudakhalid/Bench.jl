@@ -1,6 +1,20 @@
+## Motivation
+
+“The **optimal algorithm** and the **optimal buffer** size for a given **message size**
+depends on a given configuration of the system including the gap values of the
+networks, memory models, the underlying communication layer etc. The **optimal
+parameters** for a system **can be best determined by conducting experiments on
+the system**.”
+
+[Automatically Tuned Collective Communications – Sathish S. Vadhiyar, Graham E. Fagg, Jack Dongarra – Computer Science Department - University of Tennessee, Knoxville]
+
+## Installation
+
 To install MPIBenchmarks.jl, open a Julia REPL, type ] to enter the Pkg REPL mode and run the command
    
     add https://github.com/binhudakhalid/Bench.jl
+
+## Working
 
 Bench.jl requires Julia v1.6, MPI.jl v0.20, MPIBenchmarks.jl and Plots.jl
 

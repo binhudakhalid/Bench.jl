@@ -18,3 +18,14 @@ println("asdasdasdads")
 println(impl)
 println(version)
 =#
+
+
+
+#= https://stackoverflow.com/questions/45224536/module-load-command-in-linux-bash-script
+I had a similar problem, and found two solutions:
+
+instead of running your script with sh yourscript.sh or ./yourscript.sh, you could run it as . yourscript.sh This will source the module correctly and run the script
+
+if you don't want to use . yourscript.sh, you can modify your shebang from #!/bin/sh to #!/bin/bash as noted in DavidC's answer and run your script as ./yourscript.sh Note that running it as sh yourscript.sh will not work
+
+  =#  

@@ -1,7 +1,5 @@
 
 export bench1
-#using MPIPreferences
-using MPI
 function bench1(fun_name::String, task::String, path::String, lib::String) # BenchBroadcast(), @__FILE__)
     @show task
     @show path
@@ -72,8 +70,6 @@ end
 # I_MPI_ADJUST_ALLREDUCE
 function intel_all_reduce(task::String, path::String)
 
-    @show task
-    @show path
     task_name = task
     MPIBenchmarks_function_name = "OSUAllreduce" # this should the method name of MPIBenchmark.jl 
     #dic_of_algorithm = get_tuned_algorithm_from_intel("allreduce") # get_all_bcast_algorithm()
@@ -252,12 +248,6 @@ end
 
 # OPEN MPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 function openmpi_all_reduce(task_name::String, path::String)
-
-    @show "-------------------"
-    @show task_name
-    @show path
-    @show "-------------------"
-
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("allreduce")
     
     MPIBenchmarks_function_name = "OSUAllreduce"
@@ -443,30 +433,3 @@ write_graph_data(BenchData1)
 #submit_sbatch(BenchData1)
 
 =#
-
-export change_version
-
-# OpenMPI
-# mpi/OpenMPI/4.1.4-GCC-11.3.0
-# mpi/OpenMPI/4.1.2-GCC-11.2.0
-
-# IntelMPI
-# mpi/impi/2021.6.0-intel-compilers-2022.1.0
-# mpi/impi/2021.5.0-intel-compilers-2022.0.1
-
-function change_version() # BenchBroadcast(), @__FILE__)
-   
-    run(`rm -r /upb/departments/pc2/groups/hpc-prf-mpibj/khalids/.julia/compiled/v1.8/MPI`) # remember the backticks ``
-    run(`ml reset`)
-    run(`ml lang`)
-    run(`ml JuliaHPC`)
-    run(`ml mpi/OpenMPI/4.1.4-GCC-11.3.0`)
-    run(`julia setMPI_jl_version.jl`)
-
-    MPIPreferences.use_system_binary()
-
-    impl, version = MPI.identify_implementation()
-    println(impl)
-    println(version)
-
-end

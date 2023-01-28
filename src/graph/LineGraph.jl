@@ -32,22 +32,22 @@ end
 
 
 function get_csv_file_from_path(path::String)
-    @show path
-    @show "memme"
+    #@show path
+    #@show "memme"
 
     get_all_files_from_path = joinpath.(path, readdir(path))
-    @show "memme2"
+    #@show "memme2"
 
-    @show get_all_files_from_path
+    #@show get_all_files_from_path
     data_csv_files = []
-    @show "memme3"
+    #@show "memme3"
 
     for item in get_all_files_from_path
         if contains(item , ".csv")
             push!(data_csv_files, item)
         end
     end
-    @show "memme4"
+    #@show "memme4"
 
     return data_csv_files
 end

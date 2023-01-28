@@ -10,6 +10,8 @@ function bench1(fun_name::String, task::String, path::String, lib::String) # Ben
         #    intel_all_reduce(task::String, path::String)
         #else
         #end
+    sumbit_job = true
+    add_header = true
 
     if fun_name == "MPI_Allreduce" && lib == "IntelMPI"
         is_mpi_lib_is("IntelMPI") == true ? intel_all_reduce(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
@@ -37,7 +39,7 @@ function bench1(fun_name::String, task::String, path::String, lib::String) # Ben
     # OPEN MPI
 
     elseif fun_name == "MPI_Allreduce" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_reduce(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Bcast" && lib == "OpenMPI"
         is_mpi_lib_is("OpenMPI") == true ? openmpi_bcast(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Alltoall" && lib == "OpenMPI"
@@ -251,7 +253,7 @@ end
 
 
 # OPEN MPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function openmpi_all_reduce(task_name::String, path::String)
+function openmpi_all_reduce(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
 
     @show "-------------------"
     @show task_name
@@ -267,9 +269,16 @@ function openmpi_all_reduce(task_name::String, path::String)
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
     write_graph_data(BenchData1)
-    submit_sbatch(BenchData1)
+    @show "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+    @show BenchData1
+    @show "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
+
+    if sumbit_job
+        submit_sbatch(BenchData1)
+    end
+    return job_script_file_cont
 end
 
 function openmpi_bcast(task_name::String, path::String)

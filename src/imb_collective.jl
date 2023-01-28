@@ -140,7 +140,7 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
     return nothing
 end
 
-function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, MPIBenchmarks_function_name::String, benchData::BenchData )
+function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, MPIBenchmarks_function_name::String, benchData::BenchData, add_header::Bool, sub_directory::String)
 
     line = ""
     julia_script_file_name_output_array = String[]
@@ -149,7 +149,12 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
 
         algo_name = replace(item.second , " " => "_")
         julia_script_file_name::String = coll_tuned_bcast_algorithm * "_" * algo_name * ".jl"
-        julia_script_file_name_output = julia_script_file_name * ".csv"
+
+        if sub_directory == ""
+            julia_script_file_name_output = julia_script_file_name * ".csv"
+        else
+            julia_script_file_name_output = sub_directory * "/"* julia_script_file_name * ".csv"
+        end
         
 
         push!( julia_script_file_name_output_array,  julia_script_file_name_output  )
@@ -165,14 +170,25 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
         open(benchData.task_name*"/"* julia_script_file_name, "w") do file
             write(file, julia_benchmark_script)
         end
-
-        line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np 4 julia --project $(julia_script_file_name) \n"
+        if sub_directory == ""
+            line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np 4 julia --project $(julia_script_file_name) \n"
+        else
+            line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np 4 julia --project " *"./" * "$sub_directory" *"/"*"$(julia_script_file_name) \n"
+        end
+        
 
     end
     
 
     job_script_file_name = coll_tuned_bcast_algorithm * "_" * "jobscript.sh"
-    job_script_file_content = string(initial_part, line)
+
+    @show initial_part
+    @show line
+    if add_header
+        job_script_file_content = string(initial_part, line)
+    else
+        job_script_file_content = line
+    end
  
     # Write job script file
     open(benchData.task_name * "/" * job_script_file_name, "w") do file
@@ -182,7 +198,7 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     benchData.julia_script_file_name_output_array = julia_script_file_name_output_array
 
 
-    return job_script_file_name
+    return job_script_file_content
 end
 
 function write_job_script_file_intel(dict::Dict, function_name::String, MPIBenchmarks_function_name::String, benchData::BenchData )

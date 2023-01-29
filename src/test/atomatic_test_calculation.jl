@@ -47,19 +47,32 @@ function across_test_calculation(fun_name, path::String)
     end
 
     @show all_directories
-    colors = ["red", "green", "blue", "purple", "orange"]
+    colors = ["red3", "green", "blue", "purple", "orange", "yellow", "pink", "magenta", "gray", "cyan", "chartreuse1", "black" ]
+    markerSize = [1,2,3,1,2,3,1,2,3,1,2,3,1,2]
 
     x = [1, 2, 3, 4, 5]
+    xlims=(1, 2 ^ 23)
+    ylims=(Inf, Inf)
+    xticks_range = exp2.(log2(first(xlims)):2:log2(last(xlims)))
+    xticks = (xticks_range, format_bytes.(xticks_range))
+
+    p = scatter(; title = "a", titlefont=font(12), xlabel = "message size",
+    xscale = :log10, xlims, xticks, ylabel = "time [sec]",
+    ylims, yscale = :log10, legend=:topleft, left_margin=15Plots.mm, bottom_margin=15Plots.mm)
+
 
     for item in all_directories
         cvs_list = get_csv_file_from_path(item)
+        index = 1
         for csv in cvs_list
             if contains(csv, ".csv") && filesize("$(csv)") > 0
                 julia  = readdlm("$(csv)", ',', Float64; skipstart=1)
                 #@show julia
 
 
-                scatter( julia[:, 5], x, color=colors)
+                scatter!( p, julia[:, 1],  julia[:, 5], color=colors[index], ma=0.9   )
+                index = index + 1
+                @show "me"
 
                 lib = split(item, "/")[end]
                 csv_name = split(csv, "/")[end]
@@ -74,14 +87,23 @@ function across_test_calculation(fun_name, path::String)
     end
 
 
-    savefig(joinpath(path, "gggg.pdf"))
+    savefig(joinpath(path, "gggg3.pdf"))
 
 
     @show "==================="
-    @show di2
+    #@show di2
 
 
 
 
 
 end
+
+
+#= create a scatter plot with different colors for each column
+scatter(df[:,1], df[:,2], color=:red, label="Column 1")
+scatter!(df[:,1], df[:,3], color=:green, label="Column 2")
+scatter!(df[:,1], df[:,4], color=:blue, label="Column 3")
+scatter!(df[:,1], df[:,5], color=:purple, label="Column 4")
+scatter!(df[:,1], df[:,6], color=:orange, label="Column 5")
+=#

@@ -97,7 +97,7 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
 
         julia_benchmark_script = """
         using MPIBenchmarks
-        benchmark($(MPIBenchmarks_function_name)(;filename="$julia_script_file_name_output"))
+        benchmark($(MPIBenchmarks_function_name)(Int8; max_size=2097152, filename="$julia_script_file_name_output"))
         """
         @show "}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
         open(benchData.task_name*"/"* julia_script_file_name, "w") do file

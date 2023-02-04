@@ -58,11 +58,102 @@ function across_test_calculation(fun_name, path::String)
 
     p = scatter(; title = "a", titlefont=font(12), xlabel = "message size",
     xscale = :log10, xlims, xticks, ylabel = "time [sec]",
-    ylims, yscale = :log10, legend=:topleft, left_margin=15Plots.mm, bottom_margin=15Plots.mm)
+    ylims, yscale = :log10, legend=:outertopright, left_margin=15Plots.mm, bottom_margin=15Plots.mm,
+    guidefont=font(8), xtickfont=font(5), width=2000,height=2000, legend_margin=5, legendfont=font(5))
 
 
     for item in all_directories
         cvs_list = get_csv_file_from_path(item)
+        index = 1
+        for csv in cvs_list
+            if contains(csv, ".csv") && filesize("$(csv)") > 0
+                julia  = readdlm("$(csv)", ',', Float64; skipstart=1)
+                #@show julia
+
+
+                scatter!( p, julia[:, 1],  julia[:, 5], color=colors[index], ma=0.9   )
+                index = index + 1
+                @show "me"
+
+                lib = split(item, "/")[end]
+                csv_name = split(csv, "/")[end]
+                di2[lib*"_"*csv_name] = julia
+
+
+            end
+        end
+        index = 1
+        for csv in cvs_list
+            if contains(csv, ".csv") && filesize("$(csv)") > 0
+                julia  = readdlm("$(csv)", ',', Float64; skipstart=1)
+                #@show julia
+
+
+                scatter!( p, julia[:, 1],  julia[:, 5], color=colors[index], ma=0.9   )
+                index = index + 1
+                @show "me"
+
+                lib = split(item, "/")[end]
+                csv_name = split(csv, "/")[end]
+                di2[lib*"_"*csv_name] = julia
+
+
+            end
+        end
+        index = 1
+        for csv in cvs_list
+            if contains(csv, ".csv") && filesize("$(csv)") > 0
+                julia  = readdlm("$(csv)", ',', Float64; skipstart=1)
+                #@show julia
+
+
+                scatter!( p, julia[:, 1],  julia[:, 5], color=colors[index], ma=0.9   )
+                index = index + 1
+                @show "me"
+
+                lib = split(item, "/")[end]
+                csv_name = split(csv, "/")[end]
+                di2[lib*"_"*csv_name] = julia
+
+
+            end
+        end
+        index = 1
+        for csv in cvs_list
+            if contains(csv, ".csv") && filesize("$(csv)") > 0
+                julia  = readdlm("$(csv)", ',', Float64; skipstart=1)
+                #@show julia
+
+
+                scatter!( p, julia[:, 1],  julia[:, 5], color=colors[index], ma=0.9   )
+                index = index + 1
+                @show "me"
+
+                lib = split(item, "/")[end]
+                csv_name = split(csv, "/")[end]
+                di2[lib*"_"*csv_name] = julia
+
+
+            end
+        end
+        index = 1
+        for csv in cvs_list
+            if contains(csv, ".csv") && filesize("$(csv)") > 0
+                julia  = readdlm("$(csv)", ',', Float64; skipstart=1)
+                #@show julia
+
+
+                scatter!( p, julia[:, 1],  julia[:, 5], color=colors[index], ma=0.9   )
+                index = index + 1
+                @show "me"
+
+                lib = split(item, "/")[end]
+                csv_name = split(csv, "/")[end]
+                di2[lib*"_"*csv_name] = julia
+
+
+            end
+        end
         index = 1
         for csv in cvs_list
             if contains(csv, ".csv") && filesize("$(csv)") > 0

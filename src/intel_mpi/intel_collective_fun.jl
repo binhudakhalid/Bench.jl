@@ -10,7 +10,7 @@ function bench1(fun_name::String, task::String, path::String, lib::String) # Ben
         #    intel_all_reduce(task::String, path::String)
         #else
         #end
-    sumbit_job = true
+    sumbit_job = false
     add_header = true
     julia_ouput_directory = ""
 

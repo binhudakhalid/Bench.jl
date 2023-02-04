@@ -60,7 +60,7 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
     end#background_color_legend=nothing
 
     
-    savefig(joinpath(path, "graph.pdf"))
+    savefig(joinpath(path, "3graph.pdf"))
 
 end
 

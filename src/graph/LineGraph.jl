@@ -25,7 +25,8 @@ function imb_b_rgraph(path::String)
         @show "No csv file found in $(path)"
     end
 
-    plot_bench("Reduce"; xlims=(4, 2 ^ 22), ylims=(Inf, Inf), array_of_bench=data_csv_files_list, path=path)
+#    plot_bench("Reduce"; xlims=(1, 2 ^ 24), ylims=(Inf, Inf), array_of_bench=data_csv_files_list, path=path)
+    plot_bench("Reduce"; xlims=(1, 2 ^ 22), ylims=(10 ^ -6, Inf), array_of_bench=data_csv_files_list, path=path)
 
     return "avgtime"
 end

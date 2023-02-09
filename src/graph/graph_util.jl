@@ -1,6 +1,9 @@
+# Reference get the inpiration from https://github.com/giordano/julia-on-fugaku/blob/main/benchmarks/mpi-collective/plot.jl 
+# and modify the code according our need.
+
 using Plots, DelimitedFiles
 
-function format_bytes(bytes)
+function format_data_unit(bytes)
     log2b = log2(bytes)
     unit, val = divrem(log2b, 10)
     val = Int(exp2(val))
@@ -26,42 +29,30 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
     end
 
     xticks_range = exp2.(log2(first(xlims)):2:log2(last(xlims)))
-    xticks = (xticks_range, format_bytes.(xticks_range))
+    xticks = (xticks_range, format_data_unit.(xticks_range))
 
     p = plot(; title = function_name, titlefont=font(12), xlabel = "message size",
     xscale = :log10, xlims, xticks, ylabel = "time [sec]",
     ylims, yscale = :log10, legend=:topleft, left_margin=15Plots.mm, bottom_margin=15Plots.mm)
 
-    @show @__DIR__
-    @show "joinpathjoinpath"
-
-    #/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/96/100/task_2/coll_tuned_allreduce_algorithm_basic_linear.jl.csv
-
     for item in array_of_bench
         if !contains(item, ".pdf") && filesize("$(item)") > 0
-            @show "++++++++++++++++++++++++++++++++++++++++++++++++"
-            @show "$(item)"
 
-            @show filesize("$(item)")
             data = readdlm("$(item)", ',')
             if isempty(data)
                 println("The CSV file is empty.")
             else
                 println("The CSV file is not empty.")
             end
-            @show "++++++++++++++++++++++++++++++++++++++++++++++++"
 
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
-            @show "tttttttttttt"
             temp_name = split(item, "/")[end]
             value = replace(temp_name, "coll_tuned_allreduce_algorithm_" => "", ".jl.csv" => "")
             plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2, legendfontsize=4, background_color_legend=nothing)#legend=:outertop)
         end
-    end#background_color_legend=nothing
+    end
 
-    
-    savefig(joinpath(path, "graph.pdf"))
-
+    savefig(joinpath(path, "3graph.pdf"))
 end
 
 #plot_bench("Allreduce"; xlims=(4, 2 ^ 22.5), ylims=(10 ^ -6, Inf))

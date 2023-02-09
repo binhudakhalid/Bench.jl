@@ -41,11 +41,26 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
 
 end
 
+initial_part = """
+#!/bin/bash
+##SBATCH -q express
+#SBATCH -J JuliaBenchMark
+#SBATCH -A hpc-prf-mpibj
+#SBATCH -p normal
+#SBATCH -N 4                       ## [NUMBER_OF_NODE]
+#SBATCH --cpus-per-task=1
+#SBATCH --ntasks-per-node=64      ## [NUMBER_OF_MPI_RANKS_PER_NODE]
+#SBATCH --exclusive
+#SBATCH -t 40:40:00
+
+###module reset
+###module load lang       # loading the gateway module
+###module load JuliaHPC   # loading the latest JuliaHPC
+"""
 
 
 
-
-
+#=
 initial_part = """
 #!/bin/bash
 #SBATCH -q express
@@ -63,3 +78,4 @@ initial_part = """
 ###module load JuliaHPC   # loading the latest JuliaHPC
 
 """
+=#

@@ -43,6 +43,15 @@ ls -la
 """
 
 # Noctua2
+open_mpi_module = [
+"mpi/OpenMPI/4.1.4-GCC-11.3.0",
+"mpi/OpenMPI/4.1.2-GCC-11.2.0",
+#"mpi/OpenMPI/4.1.1-gcccuda-2022a",
+#"mpi/OpenMPI/4.0.5-GCC-10.2.0",
+#"mpi/OpenMPI/4.0.3-GCC-9.3.0"
+]
+
+#=
 open_mpi_module = ["mpi/OpenMPI/4.1.4-GCC-11.3.0",
 "mpi/OpenMPI/4.1.2-GCC-11.2.0",
 "mpi/OpenMPI/4.1.1-gcccuda-2022a",
@@ -50,7 +59,8 @@ open_mpi_module = ["mpi/OpenMPI/4.1.4-GCC-11.3.0",
 "mpi/OpenMPI/4.1.1-GCC-10.3.0",
 "mpi/OpenMPI/4.0.5-gcccuda-2020b",
 "mpi/OpenMPI/4.0.5-GCC-10.2.0",
-"mpi/OpenMPI/4.0.3-GCC-9.3.0",]
+"mpi/OpenMPI/4.0.3-GCC-9.3.0",] 
+=#
 
 
 
@@ -69,10 +79,21 @@ function across_test(fun_name::String, task::String, path::String, lib::String)
     @show fun_name
     @show task
     @show path
-    
-    
+    dics = Dict{String, String}()
 
+    
     mkdir(task)
+    for mpi_lib in open_mpi_module
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory);
+        dics[sub_mpi_directory] = out
+    end
+
+    @show "555555555555555555555555555555555555555555555555555555555555555"
+    @show dics
+    @show "555555555555555555555555555555555555555555555555555555555555555"
+
+ 
 
     # Create Files
     create_file(task, "changeMPI.sh", changeMPI_file_content, true)
@@ -82,15 +103,15 @@ function across_test(fun_name::String, task::String, path::String, lib::String)
     create_file(task, "check_mpi_version.jl", check_mpi_version_content, false)
 
     #create job script file
-    create_across_test_job_script_file(task, "nocuta2")
-    
-    #a = task * "/" * "s.sh"
-    #run(`sbatch $a`)
+    create_across_test_job_script_file(task, "nocuta2", dics)
 
+
+
+    #run(`sbatch s.sh`)
     cd(task) do
-        run(`sbatch s.sh`)
+       run(`sbatch s.sh`)
     end
-
+    
 
 end
 
@@ -113,24 +134,36 @@ function create_file(path::String, file_name::String, file_content::String, chmo
 end
 
 
-function create_across_test_job_script_file(path::String, nocuta_system::String)
+function create_across_test_job_script_file(path::String, nocuta_system::String, data::Dict)
     content = ""
-    if nocuta_system == "nocuta2"
-        for mod in open_mpi_module
-            tempLine0= "echo $mod"
-            tempLine = ". changeMPI.sh $mod \n"
-            tempLine2= "julia set_mpijl.jl \n"
-            tempLine3= "julia check_mpi_version.jl \n"
-            temp = tempLine0 * tempLine * tempLine2 * tempLine3
-            content = content * temp
-        end
+    
+    #if nocuta_system == "nocuta2"
+    #end
 
-
-        @show content
-        final_content = across_test_job_script_file_content_header * content
-        open(path  * "/" * "s.sh", "w") do file
-            write(file, final_content)
-        end
+    for (key, value) in data
+        tempLine0= "echo $mod \n"
+        tempLine = ". changeMPI.sh $mod \n"
+        tempLine2= "julia set_mpijl.jl \n"
+        tempLine3= "julia check_mpi_version.jl \n"
+        tempLine4= "\n" * value * "\n"
+        temp = tempLine0 * tempLine * tempLine2 * tempLine3 * tempLine4
+        content = content * temp
     end
+
+    #for mod in open_mpi_module
+        
+
+        #open(path  * "/" *  key* "see", "w") do file
+        #    write(file, value)
+        #end
+    #end
+
+    @show content
+    final_content = across_test_job_script_file_content_header * content
+    open(path  * "/" * "s.sh", "w") do file
+        write(file, final_content)
+    end
+    
+   
 end
 

@@ -16,7 +16,7 @@ function bench1(fun_name::String, task::String, path::String, lib::String, slurm
     #number_of_julia_process = 4
 
     if fun_name == "MPI_Allreduce" && lib == "IntelMPI"
-        is_mpi_lib_is("IntelMPI") == true ? intel_all_reduce(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
+        intel_all_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int)
     elseif fun_name == "MPI_Bcast" && lib == "IntelMPI"
         is_mpi_lib_is("IntelMPI") == true ? intel_bcast(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Allgather" && lib == "IntelMPI"
@@ -74,10 +74,8 @@ end
 
 
 # I_MPI_ADJUST_ALLREDUCE
-function intel_all_reduce(task::String, path::String)
+function intel_all_reduce(task::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
 
-    @show task
-    @show path
     task_name = task
     MPIBenchmarks_function_name = "OSUAllreduce" # this should the method name of MPIBenchmark.jl 
     #dic_of_algorithm = get_tuned_algorithm_from_intel("allreduce") # get_all_bcast_algorithm()
@@ -89,10 +87,13 @@ function intel_all_reduce(task::String, path::String)
 
     mkdir(BenchData1.task_name)
     #func(conf.T, 1, 10 , 3, dict_all_reduce_variant)
-    write_job_script_file_intel(dict_all_reduce_variant, "I_MPI_ADJUST_ALLREDUCE", MPIBenchmarks_function_name, BenchData1)
+    job_script_file_cont = write_job_script_file_intel(dict_all_reduce_variant, "I_MPI_ADJUST_ALLREDUCE", MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
-    submit_sbatch(BenchData1)
-    write_graph_data(BenchData1)    
+    if sumbit_job
+        submit_sbatch(BenchData1)
+    end
+
+    return job_script_file_cont    
 end
 
 

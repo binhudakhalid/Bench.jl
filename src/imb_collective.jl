@@ -205,7 +205,7 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     return job_script_file_content
 end
 
-function write_job_script_file_intel(dict::Dict, function_name::String, MPIBenchmarks_function_name::String, benchData::BenchData )
+function write_job_script_file_intel(dict::Dict, function_name::String, MPIBenchmarks_function_name::String, benchData::BenchData , add_header::Bool, sub_directory::String, slurm_config::String, number_of_julia_process::Int)
     # I_MPI_ADJUST_ALLREDUCE
     line = ""
     julia_script_file_name_output_array = String[]
@@ -214,10 +214,15 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
 
         algo_name = replace(item.second , " " => "_")
         julia_script_file_name::String = function_name * "_" * algo_name * ".jl"
-        julia_script_file_name_output = julia_script_file_name * ".csv"
-        
 
-        push!( julia_script_file_name_output_array,  julia_script_file_name_output  )
+        if sub_directory == ""
+            julia_script_file_name_output = julia_script_file_name * ".csv"
+        else
+            julia_script_file_name_output = sub_directory * "/"* julia_script_file_name * ".csv"
+        end
+
+        
+        push!( julia_script_file_name_output_array,  julia_script_file_name_output)
         
 
         julia_benchmark_script = """
@@ -228,14 +233,25 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
         open(benchData.task_name*"/"* julia_script_file_name, "w") do file
             write(file, julia_benchmark_script)
         end
-
-        line = line * "mpiexec -genv I_MPI_DEBUG=6 -genv $(function_name)=$(item.first) -np 4 julia --project $(julia_script_file_name) \n"
-
+        if sub_directory == ""
+            line = line * "mpiexec -genv I_MPI_DEBUG=6 -genv $(function_name)=$(item.first) -np $(number_of_julia_process) julia --project $(julia_script_file_name) \n"
+        else
+            line = line * "mpiexec -genv I_MPI_DEBUG=6 -genv $(function_name)=$(item.first) -np $(number_of_julia_process) julia --project  " *"./" * "$sub_directory" *"/"*"$(julia_script_file_name) \n"
+        end
     end
     
 
     job_script_file_name = function_name * "_" * "jobscript.sh"
+
+    if slurm_config != ""
+        initial_part = slurm_config
+    end
+
+    if add_header
     job_script_file_content = string(initial_part, line)
+    else
+        job_script_file_content = line
+    end
  
     # Write job script file
     open(benchData.task_name * "/" * job_script_file_name, "w") do file
@@ -245,7 +261,7 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
     benchData.julia_script_file_name_output_array = julia_script_file_name_output_array
 
 
-    return job_script_file_name
+    return job_script_file_content
 end
 
 

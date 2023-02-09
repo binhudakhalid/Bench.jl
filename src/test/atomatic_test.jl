@@ -45,22 +45,17 @@ ls -la
 # Noctua2
 open_mpi_module = [
 "mpi/OpenMPI/4.1.4-GCC-11.3.0",
-"mpi/OpenMPI/4.1.2-GCC-11.2.0",
+"mpi/OpenMPI/4.1.1-GCC-11.2.0",
 #"mpi/OpenMPI/4.1.1-gcccuda-2022a",
 #"mpi/OpenMPI/4.0.5-GCC-10.2.0",
 #"mpi/OpenMPI/4.0.3-GCC-9.3.0"
 ]
 
-#=
-open_mpi_module = ["mpi/OpenMPI/4.1.4-GCC-11.3.0",
-"mpi/OpenMPI/4.1.2-GCC-11.2.0",
-"mpi/OpenMPI/4.1.1-gcccuda-2022a",
-"mpi/OpenMPI/4.1.1-GCC-11.2.0",
-"mpi/OpenMPI/4.1.1-GCC-10.3.0",
-"mpi/OpenMPI/4.0.5-gcccuda-2020b",
-"mpi/OpenMPI/4.0.5-GCC-10.2.0",
-"mpi/OpenMPI/4.0.3-GCC-9.3.0",] 
-=#
+
+intel_mpi_module = [
+    "mpi/impi/2021.7.1-intel-compilers-2022.2.1",
+    "mpi/impi/2021.5.0-intel-compilers-2022.0.1"
+    ] 
 
 
 
@@ -75,21 +70,25 @@ open_mpi_module = ["mpi/OpenMPI/4.1.4-GCC-11.3.0",
 
 function across_test(fun_name::String, task::String, path::String, lib::String, slurm_config::String, number_of_julia_process::Int )
     
-
+  
     dics = Dict{String, String}()
-    
     mkdir(task)
-    for mpi_lib in open_mpi_module
+    #=for mpi_lib in open_mpi_module
         sub_mpi_directory = replace(mpi_lib, "/" => "")
                     ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
         out = openmpi_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
         dics[sub_mpi_directory] = out
+    end=#
+
+    for mpi_lib in intel_mpi_module
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+                    ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+        out = intel_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
     end
 
 
 
-
-    
     @show "555555555555555555555555555555555555555555555555555555555555555"
     @show dics
     @show "555555555555555555555555555555555555555555555555555555555555555"
@@ -142,8 +141,8 @@ function create_across_test_job_script_file(path::String, nocuta_system::String,
     #end
 
     for (key, value) in data
-        tempLine0= "echo $mod \n"
-        tempLine = ". changeMPI.sh $mod \n"
+        tempLine0= "echo $key \n"
+        tempLine = ". changeMPI.sh $key \n"
         tempLine2= "julia set_mpijl.jl \n"
         tempLine3= "julia check_mpi_version.jl \n"
         tempLine4= "\n" * value * "\n"

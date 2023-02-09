@@ -2,7 +2,7 @@
 export bench1
 #using MPIPreferences
 using MPI
-function bench1(fun_name::String, task::String, path::String, lib::String) # BenchBroadcast(), @__FILE__)
+function bench1(fun_name::String, task::String, path::String, lib::String, slurm_config::String, number_of_julia_process::Int ) # BenchBroadcast(), @__FILE__)
     @show task
     @show path
     
@@ -13,6 +13,7 @@ function bench1(fun_name::String, task::String, path::String, lib::String) # Ben
     sumbit_job = false
     add_header = true
     julia_ouput_directory = ""
+    #number_of_julia_process = 4
 
     if fun_name == "MPI_Allreduce" && lib == "IntelMPI"
         is_mpi_lib_is("IntelMPI") == true ? intel_all_reduce(task::String, path::String) : throw(ErrorException("IntelMPI library is not configured with MPI.jl"))
@@ -40,23 +41,23 @@ function bench1(fun_name::String, task::String, path::String, lib::String) # Ben
     # OPEN MPI
 
     elseif fun_name == "MPI_Allreduce" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Bcast" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_bcast(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_bcast(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Alltoall" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_to_all(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_to_all(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Alltoallv" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_to_allv(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_to_allv(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Allgather" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_gather(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_gather(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Allgatherv" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_gatherv(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_all_gatherv(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Scatter" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_scatter(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_scatter(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Reduce" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Gather" && lib == "OpenMPI"
-        is_mpi_lib_is("OpenMPI") == true ? openmpi_gather(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
+        is_mpi_lib_is("OpenMPI") == true ? openmpi_gather(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
 
     #elseif fun_name == "MPI_Gatherv" && lib == "OpenMPI"
     #    is_mpi_lib_is("OpenMPI") == true ? openmpi_gatherv(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
@@ -252,12 +253,7 @@ function intel_scatterv(task::String, path::String)
 end
 
 # OPEN MPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-function openmpi_all_reduce(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
-
-    @show "-------------------"
-    @show task_name
-    @show path
-    @show "-------------------"
+function openmpi_all_reduce(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
 
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("allreduce")
     
@@ -268,11 +264,8 @@ function openmpi_all_reduce(task_name::String, path::String, sumbit_job::Bool, a
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
-    @show "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
-    @show BenchData1
-    @show "999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999"
 
     if sumbit_job
         submit_sbatch(BenchData1)
@@ -280,7 +273,7 @@ function openmpi_all_reduce(task_name::String, path::String, sumbit_job::Bool, a
     return job_script_file_cont
 end
 
-function openmpi_bcast(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+function openmpi_bcast(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
     
     MPIBenchmarks_function_name = "OSUBroadcast"
@@ -290,17 +283,15 @@ function openmpi_bcast(task_name::String, path::String, sumbit_job::Bool, add_he
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
-    
-
 end
 
-function openmpi_all_to_all(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+function openmpi_all_to_all(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("alltoall")
     
     MPIBenchmarks_function_name = "OSUAlltoall"
@@ -310,16 +301,15 @@ function openmpi_all_to_all(task_name::String, path::String, sumbit_job::Bool, a
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
-    
-
 end
-function openmpi_all_to_allv(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+
+function openmpi_all_to_allv(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("alltoallv")
     
     MPIBenchmarks_function_name = "OSUAlltoallv"
@@ -329,16 +319,15 @@ function openmpi_all_to_allv(task_name::String, path::String, sumbit_job::Bool, 
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
-    
 end
 
-function openmpi_all_gather(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+function openmpi_all_gather(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("allgather")
     
     MPIBenchmarks_function_name = "OSUAllgather"
@@ -348,17 +337,15 @@ function openmpi_all_gather(task_name::String, path::String, sumbit_job::Bool, a
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
-    
-
 end
 
-function openmpi_all_gatherv(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+function openmpi_all_gatherv(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
 
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("allgatherv")
     
@@ -369,7 +356,7 @@ function openmpi_all_gatherv(task_name::String, path::String, sumbit_job::Bool, 
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
@@ -377,9 +364,8 @@ function openmpi_all_gatherv(task_name::String, path::String, sumbit_job::Bool, 
     return job_script_file_cont
 end
 
-function openmpi_scatter(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
-    
-    
+function openmpi_scatter(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
+        
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("scatter")
     
     MPIBenchmarks_function_name = "OSUScatter"
@@ -389,17 +375,15 @@ function openmpi_scatter(task_name::String, path::String, sumbit_job::Bool, add_
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
-    
-
 end
 
-function openmpi_reduce(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+function openmpi_reduce(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("reduce")
     
     MPIBenchmarks_function_name = "OSUReduce"
@@ -409,17 +393,15 @@ function openmpi_reduce(task_name::String, path::String, sumbit_job::Bool, add_h
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
-    
-
 end
 
-function openmpi_gather(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+function openmpi_gather(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("gather")
     
     MPIBenchmarks_function_name = "OSUGather"
@@ -429,13 +411,12 @@ function openmpi_gather(task_name::String, path::String, sumbit_job::Bool, add_h
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
     mkdir(BenchData1.task_name)
-    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub)
+    job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
-
 end
 
 function is_mpi_lib_is(name::String)

@@ -71,24 +71,25 @@ open_mpi_module = ["mpi/OpenMPI/4.1.4-GCC-11.3.0",
 
 
 
-
 # /upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/96/100
 
-function across_test(fun_name::String, task::String, path::String, lib::String)
+function across_test(fun_name::String, task::String, path::String, lib::String, slurm_config::String, number_of_julia_process::Int )
     
-    @show fun_name
-    @show task
-    @show path
-    dics = Dict{String, String}()
 
+    dics = Dict{String, String}()
     
     mkdir(task)
     for mpi_lib in open_mpi_module
         sub_mpi_directory = replace(mpi_lib, "/" => "")
-        out = openmpi_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory);
+                    ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+        out = openmpi_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
         dics[sub_mpi_directory] = out
     end
 
+
+
+
+    
     @show "555555555555555555555555555555555555555555555555555555555555555"
     @show dics
     @show "555555555555555555555555555555555555555555555555555555555555555"
@@ -103,13 +104,13 @@ function across_test(fun_name::String, task::String, path::String, lib::String)
     create_file(task, "check_mpi_version.jl", check_mpi_version_content, false)
 
     #create job script file
-    create_across_test_job_script_file(task, "nocuta2", dics)
+    create_across_test_job_script_file(task, "nocuta2", dics, slurm_config)
 
 
 
     #run(`sbatch s.sh`)
     cd(task) do
-       run(`sbatch s.sh`)
+       #run(`sbatch s.sh`)
     end
     
 
@@ -134,7 +135,7 @@ function create_file(path::String, file_name::String, file_content::String, chmo
 end
 
 
-function create_across_test_job_script_file(path::String, nocuta_system::String, data::Dict)
+function create_across_test_job_script_file(path::String, nocuta_system::String, data::Dict, slurm_config::String)
     content = ""
     
     #if nocuta_system == "nocuta2"
@@ -158,8 +159,16 @@ function create_across_test_job_script_file(path::String, nocuta_system::String,
         #end
     #end
 
+    if slurm_config != ""
+        final_content = slurm_config * content
+
+    else
+        final_content = across_test_job_script_file_content_header * content
+    end
+
     @show content
-    final_content = across_test_job_script_file_content_header * content
+
+    @show final_content
     open(path  * "/" * "s.sh", "w") do file
         write(file, final_content)
     end

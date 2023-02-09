@@ -140,7 +140,7 @@ function run_collective(benchmark::MPIBenchmark, func::Function, conf::Configura
     return nothing
 end
 
-function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, MPIBenchmarks_function_name::String, benchData::BenchData, add_header::Bool, sub_directory::String)
+function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, MPIBenchmarks_function_name::String, benchData::BenchData, add_header::Bool, sub_directory::String, slurm_config::String, number_of_julia_process::Int)
 
     line = ""
     julia_script_file_name_output_array = String[]
@@ -171,9 +171,9 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
             write(file, julia_benchmark_script)
         end
         if sub_directory == ""
-            line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np 4 julia --project $(julia_script_file_name) \n"
+            line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np $(number_of_julia_process) julia --project $(julia_script_file_name) \n"
         else
-            line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np 4 julia --project " *"./" * "$sub_directory" *"/"*"$(julia_script_file_name) \n"
+            line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np $(number_of_julia_process) julia --project " *"./" * "$sub_directory" *"/"*"$(julia_script_file_name) \n"
         end
         
 
@@ -181,6 +181,10 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     
 
     job_script_file_name = coll_tuned_bcast_algorithm * "_" * "jobscript.sh"
+
+    if slurm_config != ""
+        initial_part = slurm_config
+    end
 
     @show initial_part
     @show line

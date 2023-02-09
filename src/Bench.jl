@@ -51,5 +51,5 @@ Execute the MPI benchmark `b`.
 function benchmark end
 
 include("imb_collective.jl")
-
+include("test/test_across.jl")
 end

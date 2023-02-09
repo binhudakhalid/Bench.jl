@@ -186,23 +186,13 @@ function draw_chart(path, dic_with_all_results::Dict,data_size::String )
     @show data3= 1:size(data2,2)
     
     data = rand(21,100)
-
-    reala1 = [22.960236938471486, 22.960236938471486, 22.960236938471486, 22.960236938471486]
-    reala2 = [23.960236938471486, 24.05087512207294, 25.148598754884425, 36.436115356447615]
-    reala3 = [24.960236938471486, 24.05087512207294, 25.148598754884425, 36.436115356447615]
-    reala4 = [25.960236938471486, 24.05087512207294, 25.148598754884425, 36.436115356447615]
-    reala5 = [26.960236938471486, 24.05087512207294, 25.148598754884425, 36.436115356447615]
-    reala6 = [27.960236938471486, 22.05087512207294, 23.148598754884425, 34.436115356447615]
-    matrix = hcat(reala1, reala2, reala3,reala4,reala5,reala6)
-    @show matrix
-    #hcat() 
-    xs = [string("x", i) for i = 1:4]
-    ys = [string("y", i) for i = 1:6]
-    z = float((1:6) * reshape(1:4, 1, :))
+   
+    xs = [string("x", i) for i = 1:24]
+    ys = [string("y8888888888888888888888888888888888888 \n 8888888888888888888888888888888", i) for i = 1:40]
+    z = float((1:40) * reshape(1:24, 1, :))
     
-    heatmap(xs, ys, transpose(matrix), yticks = :all, ytickfont=font(2), left_margin=44Plots.mm, guidefont=font(22),  legendfont=font(10))
+    heatmap(xs, ys, z, yticks = :all, ytickfont=font(2), left_margin=44Plots.mm, guidefont=font(10),  legendfont=font(10))
 
-    
     savefig(joinpath(path, "2221tttt_bar_chart_$(index).pdf"))
 
     println("Drawing Bar Chart -> done")

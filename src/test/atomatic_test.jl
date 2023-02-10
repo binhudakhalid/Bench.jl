@@ -1,99 +1,35 @@
 export across_test
 
-changeMPI_file_content = """
-rm -rf ~/.julia/compiled/v1.8/MPI
-rm -rf /upb/departments/pc2/groups/hpc-prf-mpibj/khalids/.julia/compiled/v1.8/MPI
-rm -rf /upb/departments/pc2/users/k/khalids/.julia/compiled/v1.8/MPI
-ml reset
-ml lang
-ml JuliaHPC
-ml \$1
-"""
-#
-# julia setMPI_jl_version.jl
-#julia checkMPIVersion.jl
-
-set_mpijl_content = """
-using MPIPreferences
-MPIPreferences.use_system_binary()  # use the system binary
-"""
-
-check_mpi_version_content = """
-using MPI
-impl, version = MPI.identify_implementation()
-
-println(impl)
-
-println(version)
-"""
-
-across_test_job_script_file_content_header = """
-#!/bin/bash
-#SBATCH -q express
-#SBATCH -J JuliaBenchMark
-#SBATCH -A hpc-prf-mpibj
-##SBATCH -p hpc-prf-mpibj
-#SBATCH -N 1                     ## [NUMBER_OF_NODE]
-#SBATCH --cpus-per-task=1
-#SBATCH --ntasks-per-node=4      ## [NUMBER_OF_MPI_RANKS_PER_NODE]
-#SBATCH --mem-per-cpu 10G         ## [Memory per CPU]  - A node have many CPUs
-#SBATCH -t 00:30:00
-ls -la
-
-"""
-
-# Noctua2
-open_mpi_module = [
-"mpi/OpenMPI/4.1.4-GCC-11.3.0",
-"mpi/OpenMPI/4.1.1-GCC-11.2.0",
-#"mpi/OpenMPI/4.1.1-gcccuda-2022a",
-#"mpi/OpenMPI/4.0.5-GCC-10.2.0",
-#"mpi/OpenMPI/4.0.3-GCC-9.3.0"
-]
-
-
-intel_mpi_module = [
-    "mpi/impi/2021.7.1-intel-compilers-2022.2.1",
-    "mpi/impi/2021.5.0-intel-compilers-2022.0.1"
-    ] 
-
-
-
-
-
-
-
-
-
-
-# /upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/96/100
-
-function across_test(fun_name::String, task::String, path::String, lib::String, slurm_config::String, number_of_julia_process::Int )
+function across_test(fun_name::String, task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
     
-  
-    dics = Dict{String, String}()
-    mkdir(task)
-    #=for mpi_lib in open_mpi_module
-        sub_mpi_directory = replace(mpi_lib, "/" => "")
-                    ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
-        out = openmpi_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
-    end=#
+    if fun_name == "MPI_Allreduce"
+        dictionary = across_test_all_reduce( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Bcast" 
+        dictionary = across_test_bcast( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Allgather" 
+        dictionary = across_test_all_gather( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Allgatherv" 
+        dictionary = across_test_all_gatherv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    elseif fun_name == "MPI_Gather" 
+        dictionary = across_test_gather( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Gatherv" 
+        dictionary = across_test_gatherv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Alltoall" 
+        dictionary = across_test_all_to_all( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    elseif fun_name == "MPI_Alltoallv" 
+        dictionary = across_test_all_to_allv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Reduce" 
+        dictionary = across_test_reduce( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Scatter" 
+        dictionary = across_test_scatter( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    elseif fun_name == "MPI_Scatterv" 
+        dictionary = across_test_scatterv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    else
+        println("unable to find the function name")
+    end 
 
-    for mpi_lib in intel_mpi_module
-        sub_mpi_directory = replace(mpi_lib, "/" => "")
-                    ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
-        out = intel_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
-        dics[mpi_lib] = out
-    end
-
-
-
-    @show "555555555555555555555555555555555555555555555555555555555555555"
-    @show dics
-    @show "555555555555555555555555555555555555555555555555555555555555555"
-
- 
+    #create job script file
+    create_across_test_job_script_file(task, "nocuta2", dictionary, slurm_config) 
 
     # Create Files
     create_file(task, "changeMPI.sh", changeMPI_file_content, true)
@@ -102,21 +38,203 @@ function across_test(fun_name::String, task::String, path::String, lib::String, 
 
     create_file(task, "check_mpi_version.jl", check_mpi_version_content, false)
 
-    #create job script file
-    create_across_test_job_script_file(task, "nocuta2", dics, slurm_config)
-
-
-
     #run(`sbatch s.sh`)
     cd(task) do
        #run(`sbatch s.sh`)
     end
-    
 
 end
 
 
 
+function across_test_all_reduce( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+                    ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+        out = openmpi_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+                    ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
+        out = intel_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+
+function across_test_bcast( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_bcast(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_bcast(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end 
+
+function across_test_all_gather( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_all_gather(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_all_gather(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+    
+function across_test_all_gatherv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_all_gatherv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_all_gatherv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+        
+function across_test_gather( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_gather(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_gather(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+
+function across_test_gatherv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_gatherv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_gatherv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+
+function across_test_all_to_all( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_all_to_all(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_all_to_all(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+
+function across_test_all_to_allv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)  
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_all_to_allv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_all_to_allv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+
+function across_test_reduce( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+
+function across_test_scatter( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_scatter(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_scatter(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
+
+function across_test_scatterv( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    dics = Dict{String, String}()
+    mkdir(task)
+    for mpi_lib in openMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = openmpi_scatterv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
+        dics[sub_mpi_directory] = out
+    end
+
+    for mpi_lib in intelMPI
+        sub_mpi_directory = replace(mpi_lib, "/" => "")
+        out = intel_scatterv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process)
+        dics[mpi_lib] = out
+    end
+    return dics
+end
 
 function create_file(path::String, file_name::String, file_content::String, chmod::Bool)
     file_path = path  * "/" * file_name
@@ -133,12 +251,8 @@ function create_file(path::String, file_name::String, file_content::String, chmo
 
 end
 
-
 function create_across_test_job_script_file(path::String, nocuta_system::String, data::Dict, slurm_config::String)
     content = ""
-    
-    #if nocuta_system == "nocuta2"
-    #end
 
     for (key, value) in data
         tempLine0= "echo $key \n"
@@ -149,14 +263,6 @@ function create_across_test_job_script_file(path::String, nocuta_system::String,
         temp = tempLine0 * tempLine * tempLine2 * tempLine3 * tempLine4
         content = content * temp
     end
-
-    #for mod in open_mpi_module
-        
-
-        #open(path  * "/" *  key* "see", "w") do file
-        #    write(file, value)
-        #end
-    #end
 
     if slurm_config != ""
         final_content = slurm_config * content
@@ -170,8 +276,7 @@ function create_across_test_job_script_file(path::String, nocuta_system::String,
     @show final_content
     open(path  * "/" * "s.sh", "w") do file
         write(file, final_content)
-    end
-    
-   
+    end   
 end
 
+include("constants.jl")

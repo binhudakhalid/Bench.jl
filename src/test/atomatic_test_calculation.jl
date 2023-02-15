@@ -1,30 +1,5 @@
 export across_test_calculation
 
-# Noctua2
-open_mpi_module = [
-"mpi/OpenMPI/4.1.4-GCC-11.3.0",
-"mpi/OpenMPI/4.1.2-GCC-11.2.0",
-#"mpi/OpenMPI/4.1.1-gcccuda-2022a",
-#"mpi/OpenMPI/4.0.5-GCC-10.2.0",
-#"mpi/OpenMPI/4.0.3-GCC-9.3.0"
-]
-
-#=
-open_mpi_module = ["mpi/OpenMPI/4.1.4-GCC-11.3.0",
-"mpi/OpenMPI/4.1.2-GCC-11.2.0",
-"mpi/OpenMPI/4.1.1-gcccuda-2022a",
-"mpi/OpenMPI/4.1.1-GCC-11.2.0",
-"mpi/OpenMPI/4.1.1-GCC-10.3.0",
-"mpi/OpenMPI/4.0.5-gcccuda-2020b",
-"mpi/OpenMPI/4.0.5-GCC-10.2.0",
-"mpi/OpenMPI/4.0.3-GCC-9.3.0",] 
-=#
-
-
-       #= if !contains(item, ".pdf") && filesize("$(item)") > 0
-            @show filesize("$(item)")
-            julia  = readdlm("$(item)", ',', Float64; skipstart=1)
-            temp_name = split(item, "/")[end]=#
 
 function across_test_calculation(fun_name, path::String)
 

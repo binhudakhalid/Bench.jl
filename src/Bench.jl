@@ -1,6 +1,6 @@
 module Bench
 
-using MPI
+#using MPI
 
 abstract type MPIBenchmark end
 export benchmark
@@ -50,6 +50,8 @@ Execute the MPI benchmark `b`.
 """
 function benchmark end
 
-include("imb_collective.jl")
-include("test/test_across.jl")
+include("collective.jl")
+#include("test/test_across.jl")
+include("open_mpi/open_collective_fun.jl")
+include("bench1.jl")
 end

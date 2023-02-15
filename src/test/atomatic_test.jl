@@ -1,6 +1,6 @@
-export across_test
+export test_across_libraries
 
-function across_test(fun_name::String, task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+function test_across_libraries(fun_name::String, task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
     
     if fun_name == "MPI_Allreduce"
         dictionary = across_test_all_reduce( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
@@ -67,6 +67,7 @@ function across_test_all_reduce( task::String, path::String, slurm_config::Strin
 end
 
 function across_test_bcast( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+    @show "heere"
     dics = Dict{String, String}()
     mkdir(task)
     for mpi_lib in openMPI
@@ -74,6 +75,7 @@ function across_test_bcast( task::String, path::String, slurm_config::String, nu
         out = openmpi_bcast(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
         dics[sub_mpi_directory] = out
     end
+    @show "here01"
 
     for mpi_lib in intelMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")

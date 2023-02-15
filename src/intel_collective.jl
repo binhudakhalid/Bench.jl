@@ -28,7 +28,6 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
         using MPIBenchmarks
         benchmark($(MPIBenchmarks_function_name)(Int8; max_size=2097152, filename="$julia_script_file_name_output"))
         """
-        @show "}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
         open(benchData.task_name*"/"* julia_script_file_name, "w") do file
             write(file, julia_benchmark_script)
         end
@@ -53,14 +52,7 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
 end
 
 function submit_sbatch(benchData::BenchData)
-
-    
     @show "Before calling sbatch" 
-
-    #@show "$(benchData.task_name)/$(benchData.job_script_file_name)"
-    #cd("$(benchData.task_name)")
-    #run(`sbatch $(benchData.task_name)/$(benchData.job_script_file_name)`)
-
     cd("task0016/") do
         run(`sbatch $(benchData.job_script_file_name)`)
     end
@@ -81,7 +73,7 @@ function write_graph_data(benchData::BenchData)
 end
 function write_graph_data_c(benchData::BenchData)
  
-    @show benchData.algorithm_name="a009"
+    benchData.algorithm_name="a009"
 
 
 end

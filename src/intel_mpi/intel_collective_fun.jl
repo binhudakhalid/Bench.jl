@@ -9,7 +9,6 @@ function intel_all_reduce(task::String, path::String, sumbit_job::Bool, add_head
     task_name = task
     MPIBenchmarks_function_name = "OSUAllreduce" # this should the method name of MPIBenchmark.jl 
     #dic_of_algorithm = get_tuned_algorithm_from_intel("allreduce") # get_all_bcast_algorithm()
-    @show dict_all_reduce_variant
     algorithm_name = "I_MPI_ADJUST_ALLREDUCE" # "intel_allreduce_algorithm"
     job_script_file_name = algorithm_name * "_" * "jobscript.sh"
     # job_script_file_name = "I_MPI_ADJUST_ALLREDUCE" * "_" * "jobscript.sh"
@@ -18,6 +17,7 @@ function intel_all_reduce(task::String, path::String, sumbit_job::Bool, add_head
     mkdir(BenchData1.task_name)
     #func(conf.T, 1, 10 , 3, dict_all_reduce_variant)
     job_script_file_cont = write_job_script_file_intel(dict_all_reduce_variant, "I_MPI_ADJUST_ALLREDUCE", MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
+    
     write_graph_data(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
@@ -32,7 +32,6 @@ function intel_bcast(task::String, path::String, sumbit_job::Bool, add_header::B
 
     task_name = task
     MPIBenchmarks_function_name = "OSUBroadcast" # this should the method name of MPIBenchmark.jl 
-    @show dict_all_reduce_variant
     algorithm_name = "I_MPI_ADJUST_BCAST" # "intel_allreduce_algorithm"
     job_script_file_name = algorithm_name * "_" * "jobscript.sh"
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name, dict_broadcast_variant, algorithm_name, job_script_file_name, nothing)
@@ -40,7 +39,7 @@ function intel_bcast(task::String, path::String, sumbit_job::Bool, add_header::B
     mkdir(BenchData1.task_name)
     job_script_file_cont = write_job_script_file_intel(dict_broadcast_variant, "I_MPI_ADJUST_BCAST", MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)
-    submit_sbatch(BenchData1)
+
     if sumbit_job
         submit_sbatch(BenchData1)
     end
@@ -53,7 +52,6 @@ function intel_all_gather(task::String, path::String, sumbit_job::Bool, add_head
 
     task_name = task
     MPIBenchmarks_function_name = "OSUAllgather" # this should the method name of MPIBenchmark.jl 
-    @show dict_all_reduce_variant
     algorithm_name = "I_MPI_ADJUST_ALLGATHER" # "intel_allreduce_algorithm"
     job_script_file_name = algorithm_name * "_" * "jobscript.sh"
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name, dict_all_gather_variant, algorithm_name, job_script_file_name, nothing)
@@ -74,7 +72,6 @@ function intel_all_gatherv(task::String, path::String, sumbit_job::Bool, add_hea
 
     task_name = task
     MPIBenchmarks_function_name = "OSUAllgatherv" # this should the method name of MPIBenchmark.jl 
-    @show dict_all_reduce_variant
     algorithm_name = "I_MPI_ADJUST_ALLGATHERV" # "intel_allreduce_algorithm"
     job_script_file_name = algorithm_name * "_" * "jobscript.sh"
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name, dict_all_gatherv_variant, algorithm_name, job_script_file_name, nothing)
@@ -102,7 +99,6 @@ function intel_gather(task::String, path::String, sumbit_job::Bool, add_header::
     mkdir(BenchData1.task_name)
     job_script_file_cont = write_job_script_file_intel(dict_gather_variant, "I_MPI_ADJUST_GATHER", MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
 
-    submit_sbatch(BenchData1)
     if sumbit_job
         submit_sbatch(BenchData1)
     end

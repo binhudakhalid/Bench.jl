@@ -34,7 +34,6 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
         using MPIBenchmarks
         benchmark($(MPIBenchmarks_function_name)(Int8; max_size=2097152, filename="$julia_script_file_name_output"))
         """
-        @show "}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
         open(benchData.task_name*"/"* julia_script_file_name, "w") do file
             write(file, julia_benchmark_script)
         end
@@ -54,8 +53,6 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
         initial_part = slurm_config
     end
 
-    @show initial_part
-    @show line
     if add_header
         job_script_file_content = string(initial_part, line)
     else
@@ -74,6 +71,7 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
 end
 
 function write_job_script_file_intel(dict::Dict, function_name::String, MPIBenchmarks_function_name::String, benchData::BenchData , add_header::Bool, sub_directory::String, slurm_config::String, number_of_julia_process::Int)
+    @show "collectice.jl -> write_job_script_file_intel"
     # I_MPI_ADJUST_ALLREDUCE
     line = ""
     julia_script_file_name_output_array = String[]
@@ -97,7 +95,6 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
         using MPIBenchmarks
         benchmark($(MPIBenchmarks_function_name)(Int8; max_size=2097152, filename="$julia_script_file_name_output"))
         """
-        @show "}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}"
         open(benchData.task_name*"/"* julia_script_file_name, "w") do file
             write(file, julia_benchmark_script)
         end
@@ -116,7 +113,7 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
     end
 
     if add_header
-    job_script_file_content = string(initial_part, line)
+        job_script_file_content = string(initial_part, line)
     else
         job_script_file_content = line
     end
@@ -127,8 +124,8 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
     end
 
     benchData.julia_script_file_name_output_array = julia_script_file_name_output_array
-
-
+    
+    @show "collectice.jl -> write_job_script_file_intel return "
     return job_script_file_content
 end
 
@@ -136,7 +133,7 @@ end
 
 
 function submit_sbatch(benchData::BenchData)
-    @show "Before calling sbatch" 
+    @show "collectice.jl->Before calling sbatch" 
     cd(benchData.task_name) do
         run(`sbatch $(benchData.job_script_file_name)`)
     end
@@ -144,10 +141,7 @@ end
 
 function write_graph_data(benchData::BenchData)
 
-    @show "00000000000000000000000000000000000000000000000000000000000))))))))))))))))))))))))))))))))))))))*******************"
-    @show benchData
     julia_script_file_name_output_array_string = string(benchData.julia_script_file_name_output_array)
-    @show julia_script_file_name_output_array_string
     # Write graph data to a file
     open("$(benchData.task_name)/graph_data45" * ".txt", "w") do file
         #write(file, julia_script_file_name_output_array_string)

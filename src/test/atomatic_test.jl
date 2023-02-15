@@ -54,7 +54,7 @@ function across_test_all_reduce( task::String, path::String, slurm_config::Strin
         sub_mpi_directory = replace(mpi_lib, "/" => "")
                     ##(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String)
         out = openmpi_all_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -67,15 +67,16 @@ function across_test_all_reduce( task::String, path::String, slurm_config::Strin
 end
 
 function across_test_bcast( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
-    @show "heere"
+    @show "atomatic_test->across_test_bcast open mPi"
     dics = Dict{String, String}()
     mkdir(task)
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_bcast(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
-    @show "here01"
+
+    @show "atomatic_test->across_test_bcast intel"
 
     for mpi_lib in intelMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
@@ -91,7 +92,7 @@ function across_test_all_gather( task::String, path::String, slurm_config::Strin
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_all_gather(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -108,7 +109,7 @@ function across_test_all_gatherv( task::String, path::String, slurm_config::Stri
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_all_gatherv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -125,7 +126,7 @@ function across_test_gather( task::String, path::String, slurm_config::String, n
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_gather(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -142,7 +143,7 @@ function across_test_gatherv( task::String, path::String, slurm_config::String, 
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_gatherv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -159,7 +160,7 @@ function across_test_all_to_all( task::String, path::String, slurm_config::Strin
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_all_to_all(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -176,7 +177,7 @@ function across_test_all_to_allv( task::String, path::String, slurm_config::Stri
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_all_to_allv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -193,7 +194,7 @@ function across_test_reduce( task::String, path::String, slurm_config::String, n
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_reduce(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -210,7 +211,7 @@ function across_test_scatter( task::String, path::String, slurm_config::String, 
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_scatter(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI
@@ -227,7 +228,7 @@ function across_test_scatterv( task::String, path::String, slurm_config::String,
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_scatterv(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
-        dics[sub_mpi_directory] = out
+        dics[mpi_lib] = out
     end
 
     for mpi_lib in intelMPI

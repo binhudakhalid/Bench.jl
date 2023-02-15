@@ -31,4 +31,31 @@ test_across_libraries("MPI_Allreduce", "f_mpiallreduce", @__FILE__, my_slurm_con
 
 #test_across_libraries("MPI_Allreduce", "final_m2", @__FILE__, ["mpi/OpenMPI/4.1.4-GCC-11.3.0", "mpi/OpenMPI/4.1.2-GCC-11.2.0"], ["mpi/OpenMPI/4.1.2-GCC-11.2.0", "mpi/$
 
++++++++++
+nouctua2
++++++++++
+
+/upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/96/100/auto/final_v/f_mpiallreduce JuliaBenchMark
+
+Submitted batch job 2983414 bcast 
+2983538 allrduce
+
+
+/scratch/hpc-prf-mpibj/ya/f_bcast
+
++++++++++
+nouctua1
++++++++++
+
+bcast 2414534 /scratch/hpc-prf-mpibj/f/f_bcast
+2414544 scatter
+
+
+export JULIA_DEPOT_PATH=/upb/departments/pc2/groups/hpc-prf-mpibj/khalids/.julia
+                        /upb/departments/pc2/groups/hpc-prf-mpibj/khalids/.julia/compiled/v1.8/MPI/nO0XF_UhiAk
 =#
+
+
+
+
+

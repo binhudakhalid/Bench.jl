@@ -29,7 +29,6 @@ function openmpi_bcast(task_name::String, path::String, sumbit_job::Bool, add_he
 
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
-    @show "---------------------2------------"
     mkdir(BenchData1.task_name)
     job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
     write_graph_data(BenchData1)

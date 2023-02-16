@@ -33,7 +33,7 @@ function string_to_index(data_size::String)
     end
 end
 
-function draw_bar_chat(path::String, data_size::String)
+function draw_bar_chart(path::String, data_size::String)
     println("Drawing Bar Chart1")
     data_csv_files_list = get_csv_file_from_path(path)
     array_of_bench = data_csv_files_list

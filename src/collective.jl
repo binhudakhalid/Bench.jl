@@ -24,11 +24,9 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
             julia_script_file_name_output = sub_directory * "/"* julia_script_file_name * ".csv"
         end
         
-
         push!( julia_script_file_name_output_array,  julia_script_file_name_output  )
         
         file_name = "bcast_algo_" * algo_name * ".jl"
-
 
         julia_benchmark_script = """
         using MPIBenchmarks
@@ -42,11 +40,8 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
         else
             line = line * "mpiexec  --mca mpi_show_mca_params all --mca coll_tuned_use_dynamic_rules true --mca $(coll_tuned_bcast_algorithm) $(item.first) -np $(number_of_julia_process) julia --project " *"./" * "$sub_directory" *"/"*"$(julia_script_file_name) \n"
         end
-        
-
     end
     
-
     job_script_file_name = coll_tuned_bcast_algorithm * "_" * "jobscript.sh"
 
     if slurm_config != ""
@@ -65,8 +60,6 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     end
 
     benchData.julia_script_file_name_output_array = julia_script_file_name_output_array
-
-
     return job_script_file_content
 end
 
@@ -86,11 +79,9 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
         else
             julia_script_file_name_output = sub_directory * "/"* julia_script_file_name * ".csv"
         end
-
         
         push!( julia_script_file_name_output_array,  julia_script_file_name_output)
         
-
         julia_benchmark_script = """
         using MPIBenchmarks
         benchmark($(MPIBenchmarks_function_name)(Int8; max_size=2097152, filename="$julia_script_file_name_output"))
@@ -129,9 +120,6 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
     return job_script_file_content
 end
 
-
-
-
 function submit_sbatch(benchData::BenchData)
     @show "collectice.jl->Before calling sbatch" 
     cd(benchData.task_name) do
@@ -151,10 +139,8 @@ end
 
 include("Util.jl")
 
-#include("graph/img_graph.jl")
 include("graph/BarChart.jl")
 include("graph/LineGraph.jl") 
-
 
 #intel
 include("intel_mpi/intel_collective_variants.jl")

@@ -54,14 +54,12 @@ function bench1(fun_name::String, task::String, path::String, lib::String, slurm
         is_mpi_lib_is("OpenMPI") == true ? openmpi_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     elseif fun_name == "MPI_Gather" && lib == "OpenMPI"
         is_mpi_lib_is("OpenMPI") == true ? openmpi_gather(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int ) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
-
     #elseif fun_name == "MPI_Gatherv" && lib == "OpenMPI"
     #    is_mpi_lib_is("OpenMPI") == true ? openmpi_gatherv(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
     #elseif fun_name == "MPI_Scatterv" && lib == "OpenMPI"
     #    is_mpi_lib_is("OpenMPI") == true ? openmpi_scatterv(task::String, path::String) : throw(ErrorException("OpenMPI library is not configured with MPI.jl"))
 
 
-    
     else
         println("unable to find the function name")
     end

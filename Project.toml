@@ -11,7 +11,7 @@ DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [compat]
-MPI = "0.20"
+MPI = "0.20.4"
 julia = "1.6"
 Plots = "1.35.8"
 DelimitedFiles = "1.8.3"

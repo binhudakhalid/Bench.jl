@@ -40,7 +40,7 @@ nouctua2
 Submitted batch job 2983414 bcast 
 2983538 allrduce
 
-
+/scratch/hpc-prf-mpibj/ya/f_bcast
 /scratch/hpc-prf-mpibj/ya/f_bcast
 
 +++++++++
@@ -53,7 +53,10 @@ bcast 2414534 /scratch/hpc-prf-mpibj/f/f_bcast
 
 export JULIA_DEPOT_PATH=/upb/departments/pc2/groups/hpc-prf-mpibj/khalids/.julia
                         /upb/departments/pc2/groups/hpc-prf-mpibj/khalids/.julia/compiled/v1.8/MPI/nO0XF_UhiAk
-=#
+
+->2414561
+
+                        =#
 
 
 

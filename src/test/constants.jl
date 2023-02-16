@@ -7,9 +7,6 @@ ml lang
 ml JuliaHPC
 ml \$1
 """
-#
-# julia setMPI_jl_version.jl
-#julia checkMPIVersion.jl
 
 set_mpijl_content = """
 using MPIPreferences
@@ -51,5 +48,3 @@ intel_mpi_module = [
 "mpi/impi/2021.7.1-intel-compilers-2022.2.1",
 "mpi/impi/2021.5.0-intel-compilers-2022.0.1"
 ] 
-
-# /upb/departments/pc2/groups/hpc-prf-mpibj/tun/test/8/96/100

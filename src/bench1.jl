@@ -9,7 +9,6 @@ function bench1(fun_name::String, task::String, path::String, lib::String, slurm
     sumbit_job = false
     add_header = true
     julia_ouput_directory = ""
-    #number_of_julia_process = 4
 
     if fun_name == "MPI_Allreduce" && lib == "IntelMPI"
         intel_all_reduce(task::String, path::String, sumbit_job::Bool,add_header::Bool, julia_ouput_directory::String, slurm_config::String, number_of_julia_process::Int)

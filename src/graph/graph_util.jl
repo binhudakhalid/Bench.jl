@@ -1,4 +1,4 @@
-# Reference get the inpiration from https://github.com/giordano/julia-on-fugaku/blob/main/benchmarks/mpi-collective/plot.jl 
+# Reference: we get the inpiration from https://github.com/giordano/julia-on-fugaku/blob/main/benchmarks/mpi-collective/plot.jl 
 # and modify the code according our need.
 
 using Plots, DelimitedFiles
@@ -13,25 +13,20 @@ function format_data_unit(bytes)
         " KiB"
     elseif unit == 2
         " MiB"
-    elseif unit == 3
-        " GiB"
-    elseif unit == 4
-        " TiB"
-    end
     return string(val) * unit_string
 end
 
-function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_bench::Array, path::String)
+function plot_it(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_bench::Array, path::String)
     function_name = ""
 
     open("$(path)/graph_data45.txt") do file
         function_name = read(file, String)
     end
 
-    xticks_range = exp2.(log2(first(xlims)):2:log2(last(xlims)))
-    xticks = (xticks_range, format_data_unit.(xticks_range))
+    range_of_xticks = exp2.(log2(first(xlims)):2:log2(last(xlims)))
+    xticks = (range_of_xticks, format_data_unit.(range_of_xticks))
 
-    p = plot(; title = function_name, titlefont=font(12), xlabel = "message size",
+    p = plot(; title = function_name, xlabel = "message size", titlefont=font(12),
     xscale = :log10, xlims, xticks, ylabel = "time [sec]",
     ylims, yscale = :log10, legend=:topleft, left_margin=15Plots.mm, bottom_margin=15Plots.mm)
 
@@ -51,8 +46,8 @@ function plot_bench(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_
             plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2, legendfontsize=4, background_color_legend=nothing)#legend=:outertop)
         end
     end
-
-    savefig(joinpath(path, "3graph.pdf"))
+    # saving to the disk
+    savefig(joinpath(path, "graph.pdf"))
 end
 
 #plot_bench("Allreduce"; xlims=(4, 2 ^ 22.5), ylims=(10 ^ -6, Inf))

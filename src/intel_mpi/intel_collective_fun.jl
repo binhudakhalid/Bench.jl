@@ -1,7 +1,4 @@
-
 export bench1
-#using MPIPreferences
-#using MPI
 
 # I_MPI_ADJUST_ALLREDUCE
 function intel_all_reduce(task::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)

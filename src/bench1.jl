@@ -1,8 +1,6 @@
 function bench1(fun_name::String, task::String, path::String, lib::String, slurm_config::String, number_of_julia_process::Int ) # BenchBroadcast(), @__FILE__)
-    @show task
-    @show path
-    
-        #if is_mpi_lib_is("intel")
+
+    #if is_mpi_lib_is("intel")
         #    intel_all_reduce(task::String, path::String)
         #else
         #end

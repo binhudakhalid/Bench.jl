@@ -242,7 +242,6 @@ end
 
 function create_file(path::String, file_name::String, file_content::String, chmod::Bool)
     file_path = path  * "/" * file_name
-    @show file_path
     
     open(file_path, "w") do file
         write(file, file_content)
@@ -275,9 +274,6 @@ function create_across_test_job_script_file(path::String, nocuta_system::String,
         final_content = across_test_job_script_file_content_header * content
     end
 
-    @show content
-
-    @show final_content
     open(path  * "/" * "s.sh", "w") do file
         write(file, final_content)
     end   

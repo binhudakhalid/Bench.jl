@@ -31,8 +31,6 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
     
     string_output = read(pipeline(`ompi_info --param coll tuned -l 9`, `grep " $(function_name) algorith"`), String)
 
-    @show string_output
-
     start = findfirst("Can be locked down to choice of:", string_output)
     if start === nothing
         start = findfirst("Can be locked down to any of:", string_output)

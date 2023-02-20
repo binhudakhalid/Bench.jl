@@ -79,7 +79,6 @@ function draw_bar_chart(path::String, data_size::String)
 
             value = set_name_format!(temp_name)
             a = julia[:, 5]
-            @show a[index_of_csv]
             push!(y_list, a[index_of_csv]*1e+6)
             push!(xx_list, "$(value)")
             push!(x_list, index )
@@ -97,8 +96,6 @@ function draw_bar_chart(path::String, data_size::String)
         function_name = read(file, String)
     end
 
-
-    @show "called me"
     graph_obj = Plots.bar(x, y, orientation = :h,  yticks=(1:20, xx), left_margin=44Plots.mm, bottom_margin=6Plots.mm,  xlabel = "time (us)",
     ylabel = "algorithm Name", title = "$(function_name)", legend=:false, fillcolor=:blue,fillalpha=0.2)
   

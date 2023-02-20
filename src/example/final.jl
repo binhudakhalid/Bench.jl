@@ -40,8 +40,23 @@ nouctua2
 Submitted batch job 2983414 bcast 
 2983538 allrduce
 
+
+
+Allreuce: slurm-2986305.out  2 Node, 4 mpi rank oneach
+Scatter: slurm-2993342.out   2 Node, 4 mpi rank oneach
+
+
+Bcast: slurm-2986517.out 2 Node, 8 mpi rank oneach
+
+
+alltoallv: 3019115  good
+
+
+/scratch/hpc-prf-mpibj/ya/f_bcast  
 /scratch/hpc-prf-mpibj/ya/f_bcast
-/scratch/hpc-prf-mpibj/ya/f_bcast
+
+
+3014047-gather
 
 +++++++++
 nouctua1

@@ -1,6 +1,6 @@
 using Printf
 
-export draw_bar_chat
+export draw_bar_chart
 
             # a[2] = 1byte
             # a[3] = 2bytes
@@ -16,14 +16,42 @@ function string_to_index(data_size::String)
         return 2
     elseif data_size == "2b"
         return 3
+    elseif data_size == "4b"
+        return 4
+    elseif data_size == "8b"
+        return 5
+    elseif data_size == "16b"
+        return 6
     elseif data_size == "32b"
         return 7
     elseif data_size == "64b"
         return 8
+    elseif data_size == "128b"
+        return 9
+    elseif data_size == "256b"
+        return 10
+    elseif data_size == "512b"
+        return 11
     elseif data_size == "1kb"
         return 12
+    elseif data_size == "2kb"
+        return 13
+    elseif data_size == "4kb"
+        return 14
+    elseif data_size == "8kb"
+        return 15
+    elseif data_size == "16kb"
+        return 16
     elseif data_size == "32kb"
         return 17
+    elseif data_size == "64bk"
+        return 18
+    elseif data_size == "128bk"
+        return 19
+    elseif data_size == "256kb"
+        return 20
+    elseif data_size == "512kb"
+        return 21
     elseif data_size == "1mb"
         return 22
     elseif data_size == "2mb"
@@ -43,7 +71,7 @@ function draw_bar_chart(path::String, data_size::String)
     x_list = []
     index_of_csv = string_to_index(data_size)
 
-    index = index
+    index = 1
     for item in array_of_bench
         if !contains(item, ".pdf") && filesize("$(item)") > 0
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
@@ -51,6 +79,7 @@ function draw_bar_chart(path::String, data_size::String)
 
             value = set_name_format!(temp_name)
             a = julia[:, 5]
+            @show a[index_of_csv]
             push!(y_list, a[index_of_csv]*1e+6)
             push!(xx_list, "$(value)")
             push!(x_list, index )
@@ -69,7 +98,7 @@ function draw_bar_chart(path::String, data_size::String)
     end
 
 
-
+    @show "called me"
     graph_obj = Plots.bar(x, y, orientation = :h,  yticks=(1:20, xx), left_margin=44Plots.mm, bottom_margin=6Plots.mm,  xlabel = "time (us)",
     ylabel = "algorithm Name", title = "$(function_name)", legend=:false, fillcolor=:blue,fillalpha=0.2)
   
@@ -80,7 +109,7 @@ function draw_bar_chart(path::String, data_size::String)
         i = i + 1
     end
 
-    savefig(joinpath(path, "bar_chart_$(data_size).pdf"))
+    savefig(joinpath(path, "correct_bar_chart_$(data_size).pdf"))
 
   
     println("Drawing Bar Chart -> done")

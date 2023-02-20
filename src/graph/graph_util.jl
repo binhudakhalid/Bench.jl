@@ -13,6 +13,7 @@ function format_data_unit(bytes)
         " KiB"
     elseif unit == 2
         " MiB"
+    end
     return string(val) * unit_string
 end
 

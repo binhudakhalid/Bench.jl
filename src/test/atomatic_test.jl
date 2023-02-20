@@ -121,7 +121,7 @@ function across_test_all_gatherv( task::String, path::String, slurm_config::Stri
 end
         
 function across_test_gather( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array) 
-    @show "----------------------------------------------------------------"
+    mkdir(task)
     dics = Dict{String, String}()
     for mpi_lib in intelMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
@@ -129,7 +129,7 @@ function across_test_gather( task::String, path::String, slurm_config::String, n
         dics[mpi_lib] = out
     end
     
-    mkdir(task)
+    
     for mpi_lib in openMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
         out = openmpi_gather(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);

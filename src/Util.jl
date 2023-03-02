@@ -198,5 +198,5 @@ include("graph/LineGraph.jl")
 #intel
 include("intel_mpi/intel_collective_variants.jl")
 include("intel_mpi/intel_collective_fun.jl")
-include("test/atomatic_test.jl")
-include("test/atomatic_test_calculation.jl")
+include("test/automatic_test.jl")
+include("test/automatic_test_calculation.jl")

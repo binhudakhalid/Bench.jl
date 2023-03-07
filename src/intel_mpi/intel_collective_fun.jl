@@ -1,4 +1,5 @@
 export bench1
+using MPI
 
 # I_MPI_ADJUST_ALLREDUCE
 function intel_all_reduce(task::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
@@ -223,16 +224,16 @@ end
 function is_mpi_lib_is(name::String)
 
     #using MPI
-    #impl, version = MPI.identify_implementation()
+    impl, version = MPI.identify_implementation()
 
-    #if name == impl #"IntelMPI"
-    #    return true
-    #else
-    #    return false
-    #end
+    if name == impl #"IntelMPI"
+        return true
+    else
+        return false
+    end
     #println("asdasdasdads")
-    #println("THe:: ", impl)
-    #println("THe:: ", version)
+    println("THe:: ", impl)
+    println("THe:: ", version)
 
 
     return false

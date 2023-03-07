@@ -40,7 +40,7 @@ function test_across_libraries(fun_name::String, task::String, path::String, slu
 
     #run(`sbatch s.sh`)
     cd(task) do
-       #run(`sbatch s.sh`)
+       run(`sbatch s.sh`)
     end
 
 end

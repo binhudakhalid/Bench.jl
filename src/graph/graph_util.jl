@@ -27,9 +27,10 @@ function plot_it(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_ben
     range_of_xticks = exp2.(log2(first(xlims)):2:log2(last(xlims)))
     xticks = (range_of_xticks, format_data_unit.(range_of_xticks))
 
-    p = plot(; title = function_name, xlabel = "message size", titlefont=font(12),
+    p = plot(; title = function_name, xlabel = "message size", titlefont=font(10),
     xscale = :log10, xlims, xticks, ylabel = "time [sec]",
-    ylims, yscale = :log10, legend=:topleft, left_margin=15Plots.mm, bottom_margin=15Plots.mm)
+    ylims, yscale = :log10, legend=:topleft, left_margin=10Plots.mm, bottom_margin=8Plots.mm,
+    legendfontsize=20)
 
     for item in array_of_bench
         if !contains(item, ".pdf") && filesize("$(item)") > 0
@@ -44,7 +45,7 @@ function plot_it(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_ben
             julia  = readdlm("$(item)", ',', Float64; skipstart=1)
             temp_name = split(item, "/")[end]
             value = replace(temp_name, "coll_tuned_allreduce_algorithm_" => "", ".jl.csv" => "")
-            plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2, legendfontsize=4, background_color_legend=nothing)#legend=:outertop)
+            plot!(p, julia[:, 1],  julia[:, 5];  label="$(value)", marker=:auto, markersize=2, legendfontsize=8, background_color_legend=nothing)#legend=:outertop)
         end
     end
     # saving to the disk

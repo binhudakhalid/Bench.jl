@@ -60,15 +60,18 @@ And execute using "julia test.jl". The will submit the becnhmarking jobs to Slur
 
 1. Create script file for julia "lineplot.jl" with following content:
 
-         using Bench
-         draw_bar_chart("/scratch/hpc-prf-mpibj/com_j_variant/Noctua2/task_bench_allreduce2", "2b")
-         draw_bar_chart("/scratch/hpc-prf-mpibj/com_j_variant/Noctua2/task_bench_allreduce2", "32b")
+            using Bench
+            draw_bar_chart("/scratch/hpc-prf-mpibj/com_j_variant/Noctua2/task_bench_allreduce2", "2b")
+            draw_bar_chart("/scratch/hpc-prf-mpibj/com_j_variant/Noctua2/task_bench_allreduce2", "32b")
 
 2. Run the script (julia lineplot.jl).  It will generate line graph, each line represending 1 variant of MPIALL reduce.
 
    ![image](https://user-images.githubusercontent.com/9871507/223522068-b26cd1c1-385d-409d-81ca-5430601c9810.png)
 
 
+# bench1() Function
+      Functional signature
+      function bench1 ( fun_name::String, task::String, path::String, lib::String, slurm_config :: String , number_of_julia_process::Int )
 
 ### List of collective operation work with Open MPI for `bench1()` function:
    - MPI_Allreduce
@@ -94,9 +97,17 @@ And execute using "julia test.jl". The will submit the becnhmarking jobs to Slur
    - MPI_Reduce
    - MPI_Scatter
    - MPI_Scatterv
-
    - MPI_Scatter
    - MPI_Reduce
-
    - MPI_Scatter
    - MPI_Scatterv
+
+
+## draw_bar_chart() Function
+
+      # functional signature
+      function draw_bar_chart(path::String, data_size::String)
+      
+ The data_size can be 1b, 2b, 4b, 8b, 16b, 32b
+
+

@@ -70,8 +70,33 @@ And execute using "julia test.jl". The will submit the becnhmarking jobs to Slur
 
 
 
+### List of collective operation work with Open MPI for `bench1()` function:
+   - MPI_Allreduce
+   - MPI_Bcast
+   - MPI_Alltoall
+   - MPI_Allgather
+   - MPI_Allgatherv
+   - MPI_Scatter
+   - MPI_Reduce
+   - MPI_Gather
+   
+   
+### List of collective operation work with Intel MPI for `bench1()` function:
 
+   - MPI_Allreduce
+   - MPI_Bcast
+   - MPI_Allgather
+   - MPI_Allgatherv
+   - MPI_Gather
+   - MPI_Gatherv
+   - MPI_Alltoall
+   - MPI_Alltoallv
+   - MPI_Reduce
+   - MPI_Scatter
+   - MPI_Scatterv
 
+   - MPI_Scatter
+   - MPI_Reduce
 
-
-
+   - MPI_Scatter
+   - MPI_Scatterv

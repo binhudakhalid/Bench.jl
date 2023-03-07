@@ -111,3 +111,34 @@ And execute using "julia test.jl". The will submit the becnhmarking jobs to Slur
  The data_size can be 1b, 2b, 4b, 8b, 16b, 32b
 
 
+
+## How to run test_across_libraries on Noctua 2
+
+      using Bench
+
+      my_slurm_config = """
+      #!/bin/bash
+      ##SBATCH -q express
+      #SBATCH -J JuliaBenchMark
+      #SBATCH -A hpc-prf-mpibj
+      #SBATCH -p normal
+      #SBATCH -N 2                       ## [NUMBER_OF_NODE]
+      #SBATCH --cpus-per-task=1
+      #SBATCH --ntasks-per-node=2      ## [NUMBER_OF_MPI_RANKS_PER_NODE]
+      #SBATCH --exclusive
+      #SBATCH -t 10:40:00
+      """
+
+      # Functional Signature
+      #function test_across_libraries(fun_name::String, task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
+
+      # Modules available in Noctua 2
+      openMPIList = ["mpi/OpenMPI/4.1.4-GCC-11.3.0", "mpi/OpenMPI/4.1.1-GCC-11.2.0"]
+      #intelMPIList = ["mpi/impi/2021.7.1-intel-compilers-2022.2.1","mpi/impi/2021.5.0-intel-compilers-2022.0.1"]
+      intelMPIList = []
+      # Functional call
+      test_across_libraries("MPI_Allreduce", "test_mpiallreduce2", "/scratch/hpc-prf-mpibj/ya", my_slurm_config, 4, openMPIList, intelMPIList)
+
+![image](https://user-images.githubusercontent.com/9871507/223528278-c570d616-a588-4399-92cd-0f7f94152103.png)
+
+

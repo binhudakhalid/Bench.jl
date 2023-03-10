@@ -1,3 +1,4 @@
+# Contins all the constants.
 changeMPI_file_content = """
 rm -rf ~/.julia/compiled/v1.8/MPI
 rm -rf /upb/departments/pc2/groups/hpc-prf-mpibj/khalids/.julia/compiled/v1.8/MPI

@@ -7,6 +7,7 @@ mutable struct BenchData
     julia_script_file_name_output_array::Union{Array, Nothing}
 end
 
+# SLurm configuration file
 initial_part = """
 #!/bin/bash
 ##SBATCH -q express
@@ -30,8 +31,6 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
     dic_of_algorithm = Dict()
     
     string_output = read(pipeline(`ompi_info --param coll tuned -l 9`, `grep " $(function_name) algorith"`), String)
-
-    @show string_output
 
     start = findfirst("Can be locked down to choice of:", string_output)
     if start === nothing
@@ -60,7 +59,8 @@ function get_tuned_algorithm_from_openmpi(function_name::String)
     return dic_of_algorithm
 
 end
- 
+
+# Function to write script file for Open MPI.
 function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, MPIBenchmarks_function_name::String, benchData::BenchData, add_header::Bool, sub_directory::String, slurm_config::String, number_of_julia_process::Int)
 
     line = ""
@@ -116,8 +116,8 @@ function write_job_script_file(dict::Dict, coll_tuned_bcast_algorithm::String, M
     return job_script_file_content
 end
 
+# Function to write script file for Intel MPI.
 function write_job_script_file_intel(dict::Dict, function_name::String, MPIBenchmarks_function_name::String, benchData::BenchData , add_header::Bool, sub_directory::String, slurm_config::String, number_of_julia_process::Int)
-    @show "collectice.jl -> write_job_script_file_intel"
     # I_MPI_ADJUST_ALLREDUCE
     line = ""
     julia_script_file_name_output_array = String[]
@@ -169,12 +169,11 @@ function write_job_script_file_intel(dict::Dict, function_name::String, MPIBench
 
     benchData.julia_script_file_name_output_array = julia_script_file_name_output_array
     
-    @show "collectice.jl -> write_job_script_file_intel return "
     return job_script_file_content
 end
 
+# Funtion to submit slurm script to SLURM. 
 function submit_sbatch(benchData::BenchData)
-    @show "collectice.jl->Before calling sbatch" 
     cd(benchData.task_name) do
         run(`sbatch $(benchData.job_script_file_name)`)
     end

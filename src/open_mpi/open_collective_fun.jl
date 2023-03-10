@@ -1,25 +1,33 @@
 
-# OPEN MPI +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# This file contains function for Open MPI. These function will benchmark the collective variants of MPI. 
 function openmpi_all_reduce(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
 
+    # Get the collective variant of All reduce function.
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("allreduce")
     
+    # Set the name to MPIBenchmarks.jl function.
     MPIBenchmarks_function_name = "OSUAllreduce"
     algorithm_name = "coll_tuned_allreduce_algorithm"
     job_script_file_name = algorithm_name * "_" * "jobscript.sh"
 
+    # Make a struct, having all the data required for benchmarking.
     BenchData1 = BenchData(task_name, MPIBenchmarks_function_name,dic_of_algorithm, algorithm_name, job_script_file_name, nothing)
 
+    # Create a directory to save the benchmarking results(output from MPIBenchmarking.jl).
     mkdir(BenchData1.task_name)
     job_script_file_cont = write_job_script_file(dic_of_algorithm, BenchData1.algorithm_name, MPIBenchmarks_function_name, BenchData1, add_header, sub, slurm_config, number_of_julia_process)
+      
+    # write data to file. This data is required by line chart to draw.
     write_graph_data(BenchData1)
 
+    # Submit the script to SLurm.
     if sumbit_job
         submit_sbatch(BenchData1)
     end
     return job_script_file_cont
 end
 
+# coll_tuned_bcast_algorithm
 function openmpi_bcast(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("bcast") # get_all_bcast_algorithm()
     
@@ -39,6 +47,7 @@ function openmpi_bcast(task_name::String, path::String, sumbit_job::Bool, add_he
     return job_script_file_cont
 end
 
+# coll_tuned_alltoall_algorithm
 function openmpi_all_to_all(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("alltoall")
     
@@ -57,6 +66,7 @@ function openmpi_all_to_all(task_name::String, path::String, sumbit_job::Bool, a
     return job_script_file_cont
 end
 
+# coll_tuned_alltoallv_algorithm
 function openmpi_all_to_allv(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("alltoallv")
     
@@ -75,6 +85,7 @@ function openmpi_all_to_allv(task_name::String, path::String, sumbit_job::Bool, 
     return job_script_file_cont
 end
 
+# coll_tuned_allgather_algorithm
 function openmpi_all_gather(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("allgather")
     
@@ -93,6 +104,7 @@ function openmpi_all_gather(task_name::String, path::String, sumbit_job::Bool, a
     return job_script_file_cont
 end
 
+# coll_tuned_allgatherv_algorithm
 function openmpi_all_gatherv(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
 
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("allgatherv")
@@ -112,6 +124,7 @@ function openmpi_all_gatherv(task_name::String, path::String, sumbit_job::Bool, 
     return job_script_file_cont
 end
 
+# coll_tuned_scatter_algorithm
 function openmpi_scatter(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
         
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("scatter")
@@ -131,6 +144,7 @@ function openmpi_scatter(task_name::String, path::String, sumbit_job::Bool, add_
     return job_script_file_cont
 end
 
+# coll_tuned_reduce_algorithm
 function openmpi_reduce(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("reduce")
     
@@ -149,6 +163,7 @@ function openmpi_reduce(task_name::String, path::String, sumbit_job::Bool, add_h
     return job_script_file_cont
 end
 
+# coll_tuned_gather_algorithm
 function openmpi_gather(task_name::String, path::String, sumbit_job::Bool, add_header::Bool, sub::String, slurm_config::String, number_of_julia_process::Int)
     dic_of_algorithm = get_tuned_algorithm_from_openmpi("gather")
     

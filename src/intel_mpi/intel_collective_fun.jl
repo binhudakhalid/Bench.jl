@@ -221,6 +221,7 @@ function intel_scatterv(task::String, path::String, sumbit_job::Bool, add_header
 
 end
 
+# Function to check if the correct version of MPI is set with MPI.jl.
 function is_mpi_lib_is(name::String)
 
     #using MPI
@@ -239,35 +240,7 @@ function is_mpi_lib_is(name::String)
     return false
 end
 
-#=
-
-
-task_name = task
-MPIBenchmarks_function_name = "IMBAllreduce" # this should the method name of MPIBenchmark.jl 
-#dic_of_algorithm = get_tuned_algorithm_from_intel("allreduce") # get_all_bcast_algorithm()
-@show dict_all_reduce_variant
-algorithm_name = "intel_allreduce_algorithm"
-job_script_file_name = algorithm_name * "_" * "jobscript.sh"
-
-BenchData1 = BenchData(task_name, MPIBenchmarks_function_name, dict_all_reduce_variant, algorithm_name, job_script_file_name, nothing)
-
-mkdir(BenchData1.task_name)
-func(conf.T, 1, 10 , 3, dict_all_reduce_variant)
-write_job_script_file_intel(dict_all_reduce_variant, "I_MPI_ADJUST_ALLREDUCE", MPIBenchmarks_function_name, BenchData1)
-write_graph_data(BenchData1)
-#submit_sbatch(BenchData1)
-
-=#
-
 export change_version
-
-# OpenMPI
-# mpi/OpenMPI/4.1.4-GCC-11.3.0
-# mpi/OpenMPI/4.1.2-GCC-11.2.0
-
-# IntelMPI
-# mpi/impi/2021.6.0-intel-compilers-2022.1.0
-# mpi/impi/2021.5.0-intel-compilers-2022.0.1
 
 function change_version() # BenchBroadcast(), @__FILE__)
    

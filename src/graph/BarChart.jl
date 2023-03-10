@@ -2,15 +2,7 @@ using Printf
 
 export draw_bar_chart
 
-            # a[2] = 1byte
-            # a[3] = 2bytes
-            # a[7] = 32bytes
-            # a[8] = 64 bytes
-            # a[12] = 1kb
-            # a[17] = 32 kb
-            # a[22] = 1 MiB
-            # a[23] = 2 MB
-
+# Mapping from string to data_size index.
 function string_to_index(data_size::String)
     if data_size == "1b"
         return 2
@@ -61,6 +53,8 @@ function string_to_index(data_size::String)
     end
 end
 
+
+# This function will draw a bar chart. 
 function draw_bar_chart(path::String, data_size::String)
     println("Drawing Bar Chart1")
     data_csv_files_list = get_csv_file_from_path(path)
@@ -71,6 +65,7 @@ function draw_bar_chart(path::String, data_size::String)
     x_list = []
     index_of_csv = string_to_index(data_size)
 
+    # This for loop will get all the CSV file from the directory and save it to the lists.
     index = 1
     for item in array_of_bench
         if !contains(item, ".pdf") && filesize("$(item)") > 0
@@ -91,17 +86,18 @@ function draw_bar_chart(path::String, data_size::String)
     y = y_list 
     max_y_list = maximum(y_list)
 
-    # get name from file
+    # Get benchmark name from file
     function_name = ""
     open("$(path)/graph_data45.txt") do file
         function_name = read(file, String)
     end
 
-
-    @show "called me"
+    # Create a Plots object to draw.
     graph_obj = Plots.bar(x, y, orientation = :h,  yticks=(1:20, xx), left_margin=44Plots.mm, bottom_margin=6Plots.mm,  xlabel = "time (us)",
     ylabel = "algorithm Name", title = "$(function_name)", legend=:false, fillcolor=:blue,fillalpha=0.2)
   
+
+    # This for loop will annotate the graph(Display microsecond on each bar).
     mid = max_y_list/2
     i = 1
     for item in y_list
@@ -109,12 +105,13 @@ function draw_bar_chart(path::String, data_size::String)
         i = i + 1
     end
 
-    savefig(joinpath(path, "correct_bar_chart_$(data_size).pdf"))
+    # Save the file to the ouput directory.
+    savefig(joinpath(path, "Bar_chart_$(data_size).pdf"))
 
-  
     println("Drawing Bar Chart -> done")
 end
 
+# THis function will remove the unnecessary text from file name.
 function set_name_format!(value)
 
     value = replace(value, "I_MPI_ADJUST_ALLREDUCE_" => "",
@@ -138,5 +135,3 @@ function set_name_format!(value)
         return value
     end 
 end
-
-

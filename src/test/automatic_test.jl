@@ -1,5 +1,5 @@
 export test_across_libraries
-
+# test_across_libraries 
 function test_across_libraries(fun_name::String, task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
     
     if fun_name == "MPI_Allreduce"
@@ -28,17 +28,20 @@ function test_across_libraries(fun_name::String, task::String, path::String, slu
         println("unable to find the function name")
     end 
 
-    #create job script file
+    # Create job script file for Slurm
     create_across_test_job_script_file(task, "nocuta2", dictionary, slurm_config) 
 
     # Create Files
+    # Create script file to change the version of MPI with MPI.jl (for example, change openMPI to Intel MPI).
     create_file(task, "changeMPI.sh", changeMPI_file_content, true)
 
+    # Create script file: force Julia to use new system_binary for MPI.jl.
     create_file(task, "set_mpijl.jl", set_mpijl_content, false)
 
+    # Create script file: just to check the current version of MPI with MPI.jl.
     create_file(task, "check_mpi_version.jl", check_mpi_version_content, false)
 
-    #run(`sbatch s.sh`)
+    # Submit the script to SLURM.
     cd(task) do
        run(`sbatch s.sh`)
     end
@@ -46,7 +49,8 @@ function test_across_libraries(fun_name::String, task::String, path::String, slu
 end
 
 
-
+# This function will return a dictionary. The function will call appropirate Open MPI or Intel MPI functions 
+# based on input parameters and create dictionary and return it. 
 function across_test_all_reduce( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
     dics = Dict{String, String}()
     mkdir(task)
@@ -67,7 +71,6 @@ function across_test_all_reduce( task::String, path::String, slurm_config::Strin
 end
 
 function across_test_bcast( task::String, path::String, slurm_config::String, number_of_julia_process::Int, openMPI::Array, intelMPI::Array)
-    @show "atomatic_test->across_test_bcast open mPi"
     dics = Dict{String, String}()
     mkdir(task)
     for mpi_lib in openMPI
@@ -75,8 +78,6 @@ function across_test_bcast( task::String, path::String, slurm_config::String, nu
         out = openmpi_bcast(task * "/" * sub_mpi_directory , path, false, false, sub_mpi_directory, slurm_config, number_of_julia_process);
         dics[mpi_lib] = out
     end
-
-    @show "atomatic_test->across_test_bcast intel"
 
     for mpi_lib in intelMPI
         sub_mpi_directory = replace(mpi_lib, "/" => "")
@@ -242,12 +243,13 @@ end
 
 function create_file(path::String, file_name::String, file_content::String, chmod::Bool)
     file_path = path  * "/" * file_name
-    @show file_path
-    
+
+    # Write the file on the disk.
     open(file_path, "w") do file
         write(file, file_content)
     end
-
+  
+    # Make file excutable.
     if chmod
         file_name::String = path  * "/" * file_name
         run(`chmod 777 $file_name`)
@@ -255,6 +257,7 @@ function create_file(path::String, file_name::String, file_content::String, chmo
 
 end
 
+#  Create job script file for Slurm
 function create_across_test_job_script_file(path::String, nocuta_system::String, data::Dict, slurm_config::String)
     content = ""
 
@@ -275,9 +278,6 @@ function create_across_test_job_script_file(path::String, nocuta_system::String,
         final_content = across_test_job_script_file_content_header * content
     end
 
-    @show content
-
-    @show final_content
     open(path  * "/" * "s.sh", "w") do file
         write(file, final_content)
     end   

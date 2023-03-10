@@ -1,5 +1,6 @@
 ## https://www.intel.com/content/www/us/en/develop/documentation/mpi-developer-reference-linux/top/environment-variable-reference/i-mpi-adjust-family-environment-variables.html
 
+# This file contains the dictionary for MPI collective variants.
 # I_MPI_ADJUST_ALLREDUCE
 dict_all_reduce_variant = Dict{Integer, String}(
     1 => "Recursive_doubling",

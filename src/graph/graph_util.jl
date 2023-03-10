@@ -3,6 +3,7 @@
 
 using Plots, DelimitedFiles
 
+# THis function will format the data unit.
 function format_data_unit(bytes)
     log2b = log2(bytes)
     unit, val = divrem(log2b, 10)
@@ -32,6 +33,7 @@ function plot_it(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_ben
     ylims, yscale = :log10, legend=:topleft, left_margin=10Plots.mm, bottom_margin=8Plots.mm,
     legendfontsize=20)
 
+    # read all the CSV file from the directory
     for item in array_of_bench
         if !contains(item, ".pdf") && filesize("$(item)") > 0
 
@@ -51,8 +53,3 @@ function plot_it(name::String; xlims=(1, 2 ^ 23), ylims=(Inf, Inf), array_of_ben
     # saving to the disk
     savefig(joinpath(path, "graph.pdf"))
 end
-
-#plot_bench("Allreduce"; xlims=(4, 2 ^ 22.5), ylims=(10 ^ -6, Inf))
-#plot_bench("Gatherv"; xlims=(1, 2 ^ 20.5))
-#plot_bench("Reduce"; xlims=(4, 2 ^ 27), ylims=(Inf, Inf))
-#julia --project=. plot.jl

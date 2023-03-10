@@ -1,5 +1,6 @@
 export draw_line_chart
 
+# This funtion will draw the line chart
 function draw_line_chart(path::String)
 
     @show "Drawing graph"
@@ -15,7 +16,7 @@ function draw_line_chart(path::String)
     return "avgtime"
 end
 
-
+# get all the CSV file from the path
 function get_csv_file_from_path(path::String)
 
     get_all_files_from_path = joinpath.(path, readdir(path))

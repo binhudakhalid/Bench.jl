@@ -1,3 +1,4 @@
+# THis is the entry point for Bench.jl
 module Bench
 #using MPI
 
